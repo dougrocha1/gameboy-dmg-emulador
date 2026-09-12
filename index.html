@@ -1,0 +1,3509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Boy Canvas — Emulador</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #202124;
+  font-family: system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  color: #eee;
+}
+
+/* =========================================================
+   APP / CORPO DO GAME BOY
+   ========================================================= */
+
+#app {
+  position: relative;
+  isolation: isolate;
+  width: min(420px, 92vw);
+  height: min(850px, 88vh);
+
+  background-color: #c3c5bf;
+  background-image: url('./assets/corpo%20gameboy.png.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  border-radius: 28px 28px 115px 28px;
+  padding: 30px 24px 80px;
+
+  box-shadow:
+    0 22px 50px #0008,
+    inset 2px 2px 5px #fff8;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  overflow: hidden !important;
+}
+
+#app > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Esconde barra de rolagem */
+#app::-webkit-scrollbar {
+  display: none;
+}
+
+#app {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 768px) {
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100dvh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #121212;
+  }
+
+  #app {
+    width: 100vw !important;
+    height: 100dvh !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    padding:
+      env(safe-area-inset-top, 20px)
+      16px
+      env(safe-area-inset-bottom, 30px);
+  }
+}
+
+/* =========================================================
+   CAMADAS PRINCIPAIS
+   ========================================================= */
+
+#brand,
+#screenWrap,
+#app > .controls,
+#app > .small,
+#app > .menuDrawer,
+#app > .menu,
+#hint,
+#editor {
+  position: relative;
+  z-index: 3 !important;
+}
+
+/* =========================================================
+   MARCA
+   ========================================================= */
+
+#brand {
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #30322f;
+  font-size: 20px;
+  margin: 0 0 10px 6px;
+}
+
+/* =========================================================
+   IMAGEM SUPERIOR
+   ========================================================= */
+
+.consoleTopImage {
+  position: absolute;
+  z-index: 2;
+
+  top: -18px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  display: none;
+
+  width: 101%;
+  height: auto;
+  max-width: none;
+
+  margin: 0;
+}
+
+#app > .consoleTopImage {
+  position: absolute;
+}
+
+/* =========================================================
+   TELA
+   ========================================================= */
+
+#screenWrap {
+  position: relative;
+
+  background: #5b5e58;
+
+  border-radius: 10px 10px 42px 10px;
+
+  padding: 18px 40px 14px 40px;
+
+  box-shadow:
+    inset 0 2px 7px #ffffff30,
+    inset 0 -4px 8px #20221f99,
+    0 2px 0 #858980;
+}
+
+.screenSprite {
+  display: none;
+}
+
+.topImage {
+  position: absolute !important;
+  z-index: 2;
+
+  top: 8px;
+  left: 25px;
+
+  display: block;
+
+  height: 28px;
+  width: calc(100% - 50px);
+
+  object-fit: contain;
+
+  margin: 0;
+}
+
+#screenWrap > * {
+  position: relative;
+}
+
+.screenHeader {
+  display: flex;
+  justify-content: flex-start;
+
+  min-height: 20px;
+
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+#screenWrap > .screenHeader {
+  position: static;
+}
+
+.screenHeader small {
+  flex: 1;
+
+  color: #d5d8d3;
+
+  font-size: 7px;
+  letter-spacing: 1px;
+
+  text-align: center;
+}
+
+/* =========================================================
+   POWER
+   ========================================================= */
+
+.powerIndicator {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 1px;
+  min-width: 45px;
+
+  color: #c1c4bf;
+
+  font-size: 7px;
+  letter-spacing: 2px;
+  font-weight: 300;
+}
+
+.screenHeader > .powerIndicator:first-child {
+  position: absolute !important;
+
+  left: 1px !important;
+  top: 40%;
+
+  z-index: 3;
+
+  flex-direction: column;
+
+  gap: 1px;
+  min-width: 15px;
+
+  transform: translateY(-50%);
+}
+
+.screenHeader > .powerIndicator:first-child #powerLed {
+  width: 13px;
+  height: 13px;
+}
+
+#powerLed {
+  width: 7px;
+  height: 7px;
+
+  border: 1px solid #171b16;
+  border-radius: 50%;
+
+  background: #281719;
+
+  box-shadow: inset 0 1px 1px #0008;
+}
+
+#powerLed.is-on {
+  background: #e32828;
+
+  box-shadow:
+    0 0 8px #ff3b3b,
+    inset 1px 1px 1px #ffaaaa;
+}
+
+/* =========================================================
+   CANVAS / TELA DO GAME BOY
+   ========================================================= */
+
+canvas {
+  display: block;
+
+  width: 100%;
+  aspect-ratio: 160 / 120;
+
+  image-rendering: pixelated;
+
+  background: #20251f;
+
+  border: 5px solid #272b25;
+  border-radius: 4px;
+
+  box-shadow:
+    inset 0 0 0 2px #10130f,
+    0 2px 2px #20221f99;
+}
+
+#screenWrap.powered-off canvas {
+  background: #283603;
+  filter: none;
+}
+
+#screenWrap.powered-off #status {
+  visibility: hidden;
+}
+
+#status {
+  text-align: center;
+
+  color: #b8cfa1;
+
+  font-size: 9px;
+
+  margin-top: 6px;
+
+  letter-spacing: 0.7px;
+
+  min-height: 13px;
+}
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.consoleLogoArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 25px;
+}
+
+.consoleLogo {
+  width: min(220px, 35vw);
+  height: 50px;
+
+  object-fit: contain;
+
+  filter: contrast(1.05) saturate(0.8);
+
+  transform: translateX(-85px);
+
+  margin-top: 8px;
+}
+
+/* =========================================================
+   CONTROLES
+   ========================================================= */
+
+.controls {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 20px;
+
+  width: 100%;
+
+  padding: 0 10px;
+}
+
+.dpadArea {
+  display: flex;
+
+  flex-direction: column;
+  align-items: center;
+
+  gap: 10px;
+}
+
+/* =========================================================
+   D-PAD
+   =========================================================
+   
+   A aparência do D-pad vem SOMENTE de:
+   
+       dpad.png
+   
+   Os elementos .pad não desenham nada.
+   Eles existem somente para receber toque/clique
+   e continuar funcionando com o JavaScript.
+   ========================================================= */
+
+.dpad {
+  width: 110px;
+  height: 110px;
+
+  position: relative;
+
+  filter: drop-shadow(0 5px 4px #0006);
+}
+
+/* Imagem real do D-pad */
+.dpadSprite {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: fill;
+
+  pointer-events: none;
+}
+
+/* Áreas invisíveis de toque */
+.pad {
+  position: absolute;
+
+  z-index: 2;
+
+  background: transparent !important;
+  background-image: none !important;
+
+  border: none !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+
+  color: transparent;
+
+  appearance: none;
+}
+
+/* Área vertical */
+.v {
+  width: 37px;
+  height: 37px;
+
+  left: 36px;
+}
+
+/* Área horizontal */
+.h {
+  width: 37px;
+  height: 37px;
+
+  top: 36px;
+}
+
+/* Posição das áreas de toque */
+.v[data-key="up"] {
+  top: 0;
+}
+
+.v[data-key="down"] {
+  top: 73px;
+}
+
+.h[data-key="left"] {
+  left: 0;
+}
+
+.h[data-key="right"] {
+  left: 73px;
+}
+
+/*
+   O hub antigo não é mais necessário.
+   A imagem dpad.png já desenha o centro.
+*/
+.hub {
+  display: none !important;
+}
+
+/*
+   Remove completamente as setas que eram
+   criadas pelo CSS.
+*/
+.pad[data-key]::after {
+  content: none !important;
+}
+
+/* =========================================================
+   BOTÕES A / B
+   ========================================================= */
+
+.actions {
+  display: flex;
+
+  gap: 10px;
+
+  transform: rotate(-18deg);
+}
+
+button {
+  font: inherit;
+
+  cursor: pointer;
+
+  touch-action: none;
+
+  border: 0;
+}
+
+.ab {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+
+  position: relative;
+
+  background: transparent;
+
+  color: transparent;
+
+  font-weight: 800;
+
+  box-shadow: 0 4px 4px #0006;
+
+  overflow: hidden;
+}
+
+.buttonSprite {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: fill;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   SELECT / START
+   ========================================================= */
+
+.small {
+  position: relative;
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 20px;
+
+  margin-top: 20px;
+}
+
+.smallControl {
+  position: relative;
+
+  display: block;
+
+  flex: 0 0 auto;
+}
+
+.small button {
+  position: relative;
+
+  z-index: 2;
+
+  display: block;
+
+  background: linear-gradient(
+    180deg,
+    #a8a8a8,
+    #3f433f
+  );
+
+  color: #032848;
+
+  border-radius: 14px;
+
+  padding: 4px 18px;
+
+  font-size: 11px;
+
+  font-weight: 1000;
+
+  letter-spacing: 0.4px;
+
+  box-shadow: 0 3px 3px #0005;
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+.menuDrawer {
+  margin-top: 12px;
+}
+
+#app > .menuDrawer {
+  position: static !important;
+
+  margin-top: 12px;
+}
+
+#menuToggle {
+  position: absolute !important;
+
+  display: block;
+
+  width: 90px;
+  height: 20px;
+
+  top: 8px !important;
+  left: 43px !important;
+
+  transform: none !important;
+
+  margin: 0 !important;
+
+  border-radius: 14px;
+
+  background: linear-gradient(
+    180deg,
+    #666a64,
+    #3f433f
+  );
+
+  color: #e2e5df;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  line-height: 1;
+
+  letter-spacing: 1px;
+
+  box-shadow: 0 3px 3px #0005;
+
+  z-index: 10 !important;
+}
+
+#menuToggle[aria-expanded="true"] {
+  background: linear-gradient(
+    180deg,
+    #454943,
+    #292c29
+  );
+}
+
+.menu {
+  position: absolute !important;
+
+  top: 45px !important;
+
+  left: 20px !important;
+  right: 20px !important;
+
+  width: auto !important;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  max-height: 0;
+
+  margin-top: 0 !important;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  z-index: 99999 !important;
+
+  background: rgba(35, 38, 35, 0.95);
+
+  padding: 0 10px;
+
+  border-radius: 10px;
+
+  transition:
+    max-height 0.25s ease,
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    padding 0.2s ease;
+}
+
+#app > .menuDrawer.open .menu {
+  max-height: 250px !important;
+
+  opacity: 1 !important;
+
+  visibility: visible !important;
+
+  padding: 10px !important;
+}
+
+.menu button {
+  flex: 1 1 calc(50% - 4px);
+
+  background: #2f332e;
+
+  color: #d7ddcf;
+
+  border-radius: 8px;
+
+  padding: 5px;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   HINT
+   ========================================================= */
+
+#hint {
+  text-align: center;
+
+  color: #3d403b;
+
+  font-size: 9px;
+
+  margin-top: 12px;
+
+  line-height: 1.2;
+}
+
+/* =========================================================
+   EDITOR
+   ========================================================= */
+
+#editor {
+  display: none;
+
+  position: absolute !important;
+
+  top: 45px !important;
+
+  left: 50% !important;
+  right: auto !important;
+
+  width: min(270px, calc(100% - 24px)) !important;
+
+  transform: translateX(-50%);
+
+  margin-top: 0 !important;
+
+  background: #c3c5bf;
+
+  border-radius: 12px;
+
+  padding: 10px;
+
+  color: #292b28;
+
+  box-shadow: 0 10px 25px #0006;
+
+  z-index: 99999 !important;
+
+  max-height: calc(100% - 58px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+#editor::-webkit-scrollbar {
+  display: none;
+}
+
+/* A posição continua sendo feita arrastando os controles.
+   Os sliders de posição ficam invisíveis e continuam funcionando
+   internamente para preservar o sistema atual e os layouts salvos. */
+#editor .editRow > label:has(+ #dpadRange),
+#editor .editRow > label:has(+ #bRange),
+#editor .editRow > label:has(+ #aRange),
+#editor .editRow > label:has(+ #smallRange),
+#dpadRange,
+#bRange,
+#aRange,
+#smallRange {
+  display: none !important;
+}
+
+#editor.open {
+  display: block !important;
+}
+
+/* =========================================================
+   MODO DE EDIÇÃO
+   ========================================================= */
+
+#app.editing .dpad,
+#app.editing .ab,
+#app.editing .smallControl {
+  cursor: move;
+
+  outline: 2px dashed #7b2841;
+
+  outline-offset: 2px;
+}
+
+#app.editing .smallControl [data-key] {
+  pointer-events: none;
+}
+
+#editor h3 {
+  margin: 0 0 6px;
+
+  font-size: 12px;
+}
+
+.editRow {
+  margin-bottom: 6px;
+}
+
+.editRow label {
+  display: flex;
+
+  justify-content: space-between;
+
+  font-size: 9px;
+
+  margin-bottom: 2px;
+}
+
+.editRow input {
+  width: 100%;
+}
+
+.editorButtons {
+  display: flex;
+
+  gap: 5px;
+
+  margin-top: 7px;
+}
+
+.editorButtons button {
+  flex: 1;
+
+  padding: 5px;
+
+  border-radius: 7px;
+
+  background: #30342f;
+
+  color: white;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   POSIÇÕES EDITÁVEIS
+   ========================================================= */
+
+#grpDpad {
+  transform: translate(0px, 0px);
+}
+
+#grpB {
+  transform: translate(0px, 0px);
+}
+
+#grpA {
+  transform: translate(0px, 0px);
+}
+
+#grpSmall {
+  transform: translate(0px, 0px);
+}
+
+/* =========================================================
+   CONTROLE PRESSIONADO
+   ========================================================= */
+
+.pressed {
+  filter: brightness(0.75);
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div id="brand">
+    
+  </div>
+
+  <img
+    class="consoleTopImage"
+    src="./assets/parte%20superior%20da%20tela.png.png"
+    alt="Parte superior da tela">
+
+  <div id="screenWrap">
+
+    <img
+      class="topImage"
+      src="./assets/logo%20dot%20matrix.png.png"
+      alt="Dot Matrix">
+
+    <div class="screenHeader">
+      <span class="powerIndicator">
+        <span id="powerLed" aria-label="Ligado"></span>
+        BATTERY
+      </span>
+    </div>
+
+    <canvas
+      id="screen"
+      width="160"
+      height="144">
+    </canvas>
+
+    <div id="status">
+      INICIALIZANDO • EMULADOR
+    </div>
+
+  </div>
+
+  <div class="consoleLogoArea">
+
+    <img
+      class="consoleLogo"
+      src="./assets/logo nintendo.png"
+      alt="Nintendo">
+
+  </div>
+
+  <div class="controls">
+
+    <!-- D-PAD -->
+
+    <div class="dpadArea">
+
+      <div
+        class="dpad"
+        id="grpDpad">
+
+    <img
+      class="dpadSprite"
+      src="./assets/dpad.png.png"
+      alt="">
+
+  <div class="pad hub" aria-hidden="true"></div>
+
+  <button
+    class="pad v"
+    data-key="up">
+  </button>
+
+  <button
+    class="pad h"
+    data-key="left">
+  </button>
+
+  <button
+    class="pad v"
+    data-key="down">
+  </button>
+
+  <button
+    class="pad h"
+    data-key="right">
+  </button>
+
+      </div>
+
+    </div>
+
+    <!-- A / B -->
+
+    <div class="actions">
+
+      <button
+        class="ab"
+        id="grpB"
+        data-key="b">
+        <img
+          class="buttonSprite"
+          src="./assets/botao-b.png.png"
+          alt="">
+        B
+      </button>
+
+      <button
+        class="ab"
+        id="grpA"
+        data-key="a">
+        <img
+          class="buttonSprite"
+          src="./assets/botao-A.png.png"
+          alt="">
+        A
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- SELECT / START -->
+
+  <div
+    class="small"
+    id="grpSmall">
+
+    <span class="smallControl" id="grpSelect">
+      <button data-key="select">
+        SELECT
+      </button>
+    </span>
+
+    <span class="smallControl" id="grpStart">
+      <button data-key="start">
+        START
+      </button>
+    </span>
+
+  </div>
+
+  <!-- MENU -->
+
+  <div class="menuDrawer" id="menuDrawer">
+
+    <button
+      id="menuToggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu"
+      aria-label="Abrir menu">
+      Menu
+    </button>
+
+    <div class="menu" id="menu">
+
+      <button id="load">
+        📂 CARREGAR ROM
+      </button>
+
+      <button id="sound">
+        🔊 SOM
+      </button>
+
+      <button id="reset">
+        ↻ RESET
+      </button>
+
+      <button id="power">
+        ⏻ DESLIGAR
+      </button>
+
+      <button
+        id="btnEdit"
+        aria-label="Ativar ajustes"
+        title="Ativar ou desativar ajustes">
+        ⚙️
+      </button>
+
+    </div>
+  </div>
+
+  
+
+  <!-- EDITOR -->
+
+  <div id="editor">
+
+    <h3>
+      AJUSTAR CONTROLES
+    </h3>
+
+    <div class="editRow">
+
+      <label>
+        D-PAD
+        <span id="dpadValue">0</span>
+      </label>
+
+      <input
+        id="dpadRange"
+        type="range"
+        min="-100"
+        max="100"
+        value="0">
+
+      <label>
+        TAMANHO DA CRUZ
+        <span id="dpadScaleValue">100%</span>
+      </label>
+
+      <input id="dpadScaleRange" type="range" min="60" max="150" value="100">
+
+    </div>
+
+    <div class="editRow">
+
+      <label>
+        BOTÃO B
+        <span id="bValue">0</span>
+      </label>
+
+      <input
+        id="bRange"
+        type="range"
+        min="-100"
+        max="100"
+        value="0">
+
+      <label>
+        TAMANHO DO BOTÃO B
+        <span id="bScaleValue">100%</span>
+      </label>
+
+      <input id="bScaleRange" type="range" min="60" max="150" value="100">
+
+    </div>
+
+    <div class="editRow">
+
+      <label>
+        BOTÃO A
+        <span id="aValue">0</span>
+      </label>
+
+      <input
+        id="aRange"
+        type="range"
+        min="-100"
+        max="100"
+        value="0">
+
+      <label>
+        TAMANHO DO BOTÃO A
+        <span id="aScaleValue">100%</span>
+      </label>
+
+      <input id="aScaleRange" type="range" min="60" max="150" value="100">
+
+    </div>
+
+    <div class="editRow">
+
+      <label>
+        SELECT / START
+        <span id="smallValue">0</span>
+      </label>
+
+      <input
+        id="smallRange"
+        type="range"
+        min="-100"
+        max="100"
+        value="0">
+
+      <label>
+        TAMANHO SELECT / START
+        <span id="smallScaleValue">100%</span>
+      </label>
+
+      <input id="smallScaleRange" type="range" min="60" max="150" value="100">
+
+    </div>
+
+    <div class="editorButtons">
+
+      <button id="resetControls">
+        RESETAR
+      </button>
+
+      <button id="doneEdit">
+        CONCLUÍDO
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+'use strict';
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+const canvas = document.getElementById('screen');
+const ctx = canvas.getContext('2d');
+
+ctx.imageSmoothingEnabled = false;
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+const statusEl =
+  document.getElementById('status');
+
+const screenWrap =
+  document.getElementById('screenWrap');
+
+const powerLed =
+  document.getElementById('powerLed');
+
+function showStatus(text) {
+  statusEl.textContent = text;
+}
+
+function showError(text) {
+  statusEl.textContent = 'ERRO • ' + text;
+}
+
+function updatePowerVisual(isPoweredOn) {
+
+  screenWrap.classList.toggle(
+    'powered-off',
+    !isPoweredOn
+  );
+
+  powerLed.classList.toggle(
+    'is-on',
+    isPoweredOn
+  );
+
+  powerLed.setAttribute(
+    'aria-label',
+    isPoweredOn ? 'Ligado' : 'Desligado'
+  );
+
+}
+
+///pinta a tela de verde escuro quando desligado///
+
+function paintPoweredOffScreen() {
+
+  ctx.fillStyle = '#283603';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+}
+
+updatePowerVisual(true);
+
+
+/* =========================================================
+   EMULADOR
+========================================================= */
+
+let gameboy = null;
+
+let currentRomName = null;
+
+let currentRomBuffer = null;
+
+let emulatorPoweredOn = true;
+
+let pendingFrameId = null;
+
+const nativeRequestAnimationFrame =
+  window.requestAnimationFrame.bind(window);
+
+const nativeCancelAnimationFrame =
+  window.cancelAnimationFrame.bind(window);
+
+window.requestAnimationFrame = callback => {
+
+  if (!emulatorPoweredOn) {
+
+    return 0;
+
+  }
+
+  pendingFrameId =
+    nativeRequestAnimationFrame(timestamp => {
+
+      pendingFrameId = null;
+
+      callback(timestamp);
+
+    });
+
+  return pendingFrameId;
+
+};
+
+let autosaveTimer = null;
+
+let sramSaveTimer = null;
+
+let audioUnlocked = false;
+
+
+/* =========================================================
+   INDEXED DB
+========================================================= */
+
+const DB_NAME = 'GB_Emulator_Storage';
+
+const STORE_NAME = 'rom_data';
+
+
+function openDB() {
+
+  return new Promise((resolve, reject) => {
+
+    const request =
+      indexedDB.open(DB_NAME, 1);
+
+    request.onupgradeneeded = () => {
+
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+
+        db.createObjectStore(STORE_NAME);
+
+      }
+
+    };
+
+    request.onsuccess = () => {
+
+      resolve(request.result);
+
+    };
+
+    request.onerror = () => {
+
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+async function saveToDB(key, value) {
+
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+
+    const tx =
+      db.transaction(STORE_NAME, 'readwrite');
+
+    tx.objectStore(STORE_NAME)
+      .put(value, key);
+
+    tx.oncomplete = () => {
+
+      db.close();
+      resolve();
+
+    };
+
+    tx.onerror = () => {
+
+      db.close();
+      reject(tx.error);
+
+    };
+
+  });
+
+}
+
+
+async function getFromDB(key) {
+
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+
+    const tx =
+      db.transaction(STORE_NAME, 'readonly');
+
+    const request =
+      tx.objectStore(STORE_NAME).get(key);
+
+    request.onsuccess = () => {
+
+      db.close();
+      resolve(request.result);
+
+    };
+
+    request.onerror = () => {
+
+      db.close();
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+/* =========================================================
+   BASE64
+========================================================= */
+
+function arrayBufferToBase64(buffer) {
+
+  const bytes =
+    new Uint8Array(buffer);
+
+  let binary = '';
+
+  const chunk = 0x8000;
+
+  for (
+    let i = 0;
+    i < bytes.length;
+    i += chunk
+  ) {
+
+    binary += String.fromCharCode(
+      ...bytes.subarray(i, i + chunk)
+    );
+
+  }
+
+  return btoa(binary);
+
+}
+
+
+function base64ToArrayBuffer(base64) {
+
+  const binary =
+    atob(base64);
+
+  const bytes =
+    new Uint8Array(binary.length);
+
+  for (
+    let i = 0;
+    i < binary.length;
+    i++
+  ) {
+
+    bytes[i] =
+      binary.charCodeAt(i);
+
+  }
+
+  return bytes.buffer;
+
+}
+
+
+/* =========================================================
+   SOM
+========================================================= */
+
+function unlockAudio() {
+
+  if (audioUnlocked) return;
+
+  audioUnlocked = true;
+
+  try {
+
+    window.dispatchEvent(
+      new Event('click')
+    );
+
+  } catch {}
+
+}
+
+
+document.getElementById('sound')
+  .addEventListener('click', () => {
+
+    unlockAudio();
+
+    if (gameboy) {
+
+      showStatus('SOM • ATIVADO');
+
+    } else {
+
+      showStatus('SISTEMA PRONTO');
+
+    }
+
+  });
+
+
+/* =========================================================
+   SRAM / SAVE NORMAL DO JOGO
+========================================================= */
+
+async function saveState(isAuto = false) {
+
+  if (
+    !gameboy ||
+    !currentRomName ||
+    !gameboy.cartridge
+  ) {
+
+    return false;
+
+  }
+
+  try {
+
+    const saveData =
+      gameboy.getCartridgeSaveRam();
+
+    if (
+      !saveData ||
+      saveData.byteLength === 0
+    ) {
+
+      if (!isAuto) {
+
+        showStatus(
+          'ESTE JOGO NÃO POSSUI SAVE SRAM'
+        );
+
+      }
+
+      return false;
+
+    }
+
+
+    /* IndexedDB */
+
+    await saveToDB(
+      'save_' + currentRomName,
+      saveData
+    );
+
+
+    /* Backup localStorage */
+
+    try {
+
+      const base64 =
+        arrayBufferToBase64(saveData);
+
+      localStorage.setItem(
+        'gb_save_' + currentRomName,
+        base64
+      );
+
+    } catch (e) {
+
+      console.warn(
+        'Backup localStorage indisponível:',
+        e
+      );
+
+    }
+
+
+    if (!isAuto) {
+
+      showStatus(
+        'PROGRESSO DO JOGO SALVO'
+      );
+
+    }
+
+    return true;
+
+  } catch (e) {
+
+    console.error(
+      'Erro ao salvar SRAM:',
+      e
+    );
+
+    if (!isAuto) {
+
+      showError(
+        'NÃO FOI POSSÍVEL SALVAR'
+      );
+
+    }
+
+    return false;
+
+  }
+
+}
+
+
+async function loadSaveState(isAuto = false) {
+
+  if (
+    !gameboy ||
+    !currentRomName ||
+    !gameboy.cartridge
+  ) {
+
+    return false;
+
+  }
+
+  try {
+
+    let saveData =
+      await getFromDB(
+        'save_' + currentRomName
+      );
+
+
+    /* Fallback */
+
+    if (!saveData) {
+
+      try {
+
+        const raw =
+          localStorage.getItem(
+            'gb_save_' + currentRomName
+          );
+
+        if (raw) {
+
+          saveData =
+            base64ToArrayBuffer(raw);
+
+        }
+
+      } catch (e) {
+
+        console.warn(
+          'Fallback localStorage falhou:',
+          e
+        );
+
+      }
+
+    }
+
+
+    if (saveData) {
+
+      gameboy.setCartridgeSaveRam(
+        saveData
+      );
+
+      if (!isAuto) {
+
+        showStatus(
+          'SAVE DO JOGO RESTAURADO'
+        );
+
+      }
+
+      return true;
+
+    }
+
+  } catch (e) {
+
+    console.error(
+      'Erro ao carregar SRAM:',
+      e
+    );
+
+    if (!isAuto) {
+
+      showError(
+        'ERRO AO RESTAURAR SAVE'
+      );
+
+    }
+
+  }
+
+  return false;
+
+}
+
+
+/* =========================================================
+   AUTO SAVE QUANDO O CARTUCHO ESCREVE NA SRAM
+========================================================= */
+
+function setupSramAutoSave() {
+
+  if (
+    !gameboy ||
+    !gameboy.cartridge
+  ) {
+
+    return;
+
+  }
+
+  try {
+
+    gameboy.setOnWriteToCartridgeRam(() => {
+
+      clearTimeout(sramSaveTimer);
+
+      sramSaveTimer =
+        setTimeout(() => {
+
+          saveState(true);
+
+        }, 500);
+
+    });
+
+  } catch (e) {
+
+    console.warn(
+      'Auto-save SRAM indisponível:',
+      e
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BACKUP PERIÓDICO
+========================================================= */
+
+function startAutosave() {
+
+  stopAutosave();
+
+  autosaveTimer =
+    setInterval(() => {
+
+      saveState(true);
+
+    }, 8000);
+
+}
+
+
+function stopAutosave() {
+
+  if (autosaveTimer) {
+
+    clearInterval(autosaveTimer);
+
+    autosaveTimer = null;
+
+  }
+
+}
+
+
+/* =========================================================
+   CARREGAR ROM
+========================================================= */
+
+async function loadROM(
+  buffer,
+  name
+) {
+
+  if (!gameboy) {
+
+    showError(
+      'EMULADOR NÃO INICIALIZADO'
+    );
+
+    return;
+
+  }
+
+  try {
+
+    stopAutosave();
+
+    if (pendingFrameId !== null) {
+
+      nativeCancelAnimationFrame(
+        pendingFrameId
+      );
+
+      pendingFrameId = null;
+
+    }
+
+    emulatorPoweredOn = true;
+
+    updatePowerVisual(true);
+
+    document.getElementById('power')
+      .textContent = '⏻ DESLIGAR';
+
+
+    currentRomBuffer = buffer;
+
+    currentRomName =
+      name
+        .replace(/[^a-zA-Z0-9]/g, '_');
+
+
+    /* Guarda ROM */
+
+    await saveToDB(
+      'active_rom_buffer',
+      buffer
+    );
+
+    await saveToDB(
+      'active_rom_name',
+      currentRomName
+    );
+
+
+    /* Carrega ROM */
+
+    gameboy.loadGame(
+      buffer
+    );
+
+
+    /*
+      IMPORTANTE:
+      o cartridge só existe depois
+      do loadGame()
+    */
+
+    setupSramAutoSave();
+
+
+    /*
+      Restaura o save ANTES de iniciar
+      a execução do jogo
+    */
+
+    const restored =
+      await loadSaveState(true);
+
+
+    unlockAudio();
+
+    gameboy.run();
+
+
+    if (restored) {
+
+      showStatus(
+        'RODANDO • SAVE RESTAURADO'
+      );
+
+    } else {
+
+      showStatus(
+        'RODANDO • ' +
+        name
+          .toUpperCase()
+          .replace(/\.[^.]+$/, '')
+      );
+
+    }
+
+
+    startAutosave();
+
+  } catch (e) {
+
+    console.error(e);
+
+    showError(
+      'NÃO FOI POSSÍVEL CARREGAR A ROM'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   INPUT DE ROM
+========================================================= */
+
+const fileInput =
+  document.createElement('input');
+
+fileInput.type = 'file';
+
+fileInput.accept =
+  '.gb,.gbc,application/octet-stream';
+
+fileInput.style.display =
+  'none';
+
+document.body.appendChild(
+  fileInput
+);
+
+
+document.getElementById('load')
+  .addEventListener('click', () => {
+
+    unlockAudio();
+
+    fileInput.click();
+
+  });
+
+
+fileInput.addEventListener(
+  'change',
+  async () => {
+
+    const file =
+      fileInput.files?.[0];
+
+    if (!file) return;
+
+    try {
+
+      const buffer =
+        await file.arrayBuffer();
+
+      await loadROM(
+        buffer,
+        file.name
+      );
+
+    } catch (e) {
+
+      console.error(e);
+
+      showError(
+        'ERRO AO LER ROM'
+      );
+
+    }
+
+    fileInput.value = '';
+
+  }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+document.getElementById('reset')
+  ?.addEventListener('click', async () => {
+
+    if (
+      !currentRomBuffer ||
+      !currentRomName
+    ) {
+
+      showStatus(
+        'NENHUMA ROM CARREGADA'
+      );
+
+      return;
+
+    }
+
+    unlockAudio();
+
+    /*
+      Reset reinicia o jogo.
+      O SRAM continua preservado.
+    */
+
+    await saveState(true);
+
+    try {
+
+      stopAutosave();
+
+      if (pendingFrameId !== null) {
+
+        nativeCancelAnimationFrame(
+          pendingFrameId
+        );
+
+        pendingFrameId = null;
+
+      }
+
+      emulatorPoweredOn = true;
+
+      updatePowerVisual(true);
+
+      document.getElementById('power')
+        .textContent = '⏻ DESLIGAR';
+
+      gameboy.loadGame(
+        currentRomBuffer
+      );
+
+      setupSramAutoSave();
+
+      await loadSaveState(true);
+
+      gameboy.run();
+
+      startAutosave();
+
+      showStatus(
+        'JOGO REINICIADO'
+      );
+
+    } catch (e) {
+
+      console.error(e);
+
+      showError(
+        'ERRO AO REINICIAR'
+      );
+
+    }
+
+  });
+
+
+document.getElementById('power')
+  ?.addEventListener('click', () => {
+
+    if (!gameboy) {
+
+      showStatus(
+        'EMULADOR NÃO INICIALIZADO'
+      );
+
+      return;
+
+    }
+
+    if (emulatorPoweredOn) {
+
+      emulatorPoweredOn = false;
+
+      paintPoweredOffScreen();
+
+      updatePowerVisual(false);
+
+      if (pendingFrameId !== null) {
+
+        nativeCancelAnimationFrame(
+          pendingFrameId
+        );
+
+        pendingFrameId = null;
+
+      }
+
+      stopAutosave();
+
+      document.getElementById('power')
+        .textContent = '⏻ LIGAR';
+
+      showStatus(
+        'EMULADOR DESLIGADO'
+      );
+
+      return;
+
+    }
+
+    emulatorPoweredOn = true;
+
+    updatePowerVisual(true);
+
+    document.getElementById('power')
+      .textContent = '⏻ DESLIGAR';
+
+    if (currentRomBuffer) {
+
+      gameboy.run();
+      startAutosave();
+
+      showStatus(
+        'RODANDO • ' +
+        currentRomName
+          .toUpperCase()
+          .replace(/_/g, ' ')
+      );
+
+    } else {
+
+      showStatus(
+        'SISTEMA PRONTO • CARREGUE UMA ROM'
+      );
+
+    }
+
+  });
+
+
+/* =========================================================
+   CONTROLES DO GAME BOY
+========================================================= */
+
+const keyMap = {
+
+  ArrowUp: 'up',
+  ArrowDown: 'down',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+
+  x: 'a',
+  X: 'a',
+
+  z: 'b',
+  Z: 'b',
+
+  Enter: 'start',
+
+  Shift: 'select'
+
+};
+
+
+/* =========================================================
+   TECLADO FÍSICO
+========================================================= */
+
+window.addEventListener(
+  'keydown',
+  event => {
+
+    if (!keyMap[event.key]) return;
+
+    event.preventDefault();
+
+    /*
+      O próprio emulador recebe o evento normalmente.
+    */
+
+  },
+  { passive: false }
+);
+
+
+window.addEventListener(
+  'keyup',
+  event => {
+
+    if (!keyMap[event.key]) return;
+
+    event.preventDefault();
+
+  },
+  { passive: false }
+);
+
+
+/* =========================================================
+   CONTROLES TOUCH
+========================================================= */
+
+const touchInputMap = {
+
+  up: 'isPressingUp',
+  down: 'isPressingDown',
+  left: 'isPressingLeft',
+  right: 'isPressingRight',
+
+  a: 'isPressingA',
+  b: 'isPressingB',
+
+  start: 'isPressingStart',
+  select: 'isPressingSelect'
+
+};
+
+
+/*
+  Controla diretamente o estado interno
+  do Game Boy.
+
+  Isso é diferente do keyboardManager:
+
+  keyboardManager = teclado físico
+  input           = controles programáticos
+*/
+
+function setTouchInput(logical, pressed) {
+
+  if (!gameboy || !gameboy.input) {
+    return;
+  }
+
+  const property =
+    touchInputMap[logical];
+
+  if (!property) {
+    return;
+  }
+
+  gameboy.input[property] = pressed;
+}
+
+
+document
+  .querySelectorAll('[data-key]')
+  .forEach(button => {
+
+    const logical =
+      button.dataset.key;
+
+
+    function press(event) {
+
+      event.preventDefault();
+
+      button.classList.add('pressed');
+
+      setTouchInput(
+        logical,
+        true
+      );
+
+    }
+
+
+    function release(event) {
+
+      if (event) {
+        event.preventDefault();
+      }
+
+      button.classList.remove('pressed');
+
+      setTouchInput(
+        logical,
+        false
+      );
+
+    }
+
+
+    button.addEventListener(
+      'pointerdown',
+      press,
+      { passive: false }
+    );
+
+
+    button.addEventListener(
+      'pointerup',
+      release,
+      { passive: false }
+    );
+
+
+    button.addEventListener(
+      'pointercancel',
+      release,
+      { passive: false }
+    );
+
+
+    button.addEventListener(
+      'lostpointercapture',
+      release,
+      { passive: false }
+    );
+
+  });
+
+
+/* =========================================================
+   SOLTAR TODOS OS BOTÕES
+========================================================= */
+
+function releaseEverything() {
+
+  document
+    .querySelectorAll(
+      '[data-key].pressed'
+    )
+    .forEach(button => {
+
+      const logical =
+        button.dataset.key;
+
+      button.classList.remove(
+        'pressed'
+      );
+
+      setTouchInput(
+        logical,
+        false
+      );
+
+    });
+
+
+  /*
+    Segurança extra:
+    garante que nenhum botão fique
+    permanentemente pressionado.
+  */
+
+  if (gameboy && gameboy.input) {
+
+    gameboy.input.isPressingUp = false;
+    gameboy.input.isPressingDown = false;
+    gameboy.input.isPressingLeft = false;
+    gameboy.input.isPressingRight = false;
+
+    gameboy.input.isPressingA = false;
+    gameboy.input.isPressingB = false;
+
+    gameboy.input.isPressingStart = false;
+    gameboy.input.isPressingSelect = false;
+
+  }
+
+}
+
+
+window.addEventListener(
+  'blur',
+  releaseEverything
+);
+
+
+document.addEventListener(
+  'visibilitychange',
+  () => {
+
+    if (
+      document.visibilityState !==
+      'visible'
+    ) {
+
+      releaseEverything();
+
+    }
+
+  }
+);
+
+
+
+
+/* =========================================================
+   EDITOR DE CONTROLES
+========================================================= */
+
+const editor =
+  document.getElementById('editor');
+
+const app =
+  document.getElementById('app');
+
+const btnEdit =
+  document.getElementById('btnEdit');
+
+const doneEdit =
+  document.getElementById('doneEdit');
+
+const resetControls =
+  document.getElementById('resetControls');
+
+const menuDrawer =
+  document.getElementById('menuDrawer');
+
+const menuToggle =
+  document.getElementById('menuToggle');
+
+menuToggle.addEventListener(
+  'click',
+  () => {
+
+    const isOpen =
+      menuDrawer.classList.toggle('open');
+
+    menuToggle.setAttribute(
+      'aria-expanded',
+      String(isOpen)
+    );
+
+    menuToggle.setAttribute(
+      'aria-label',
+      isOpen ? 'Fechar menu' : 'Abrir menu'
+    );
+
+  }
+);
+
+
+const dpadRange =
+  document.getElementById('dpadRange');
+
+const bRange =
+  document.getElementById('bRange');
+
+const aRange =
+  document.getElementById('aRange');
+
+const smallRange =
+  document.getElementById('smallRange');
+
+const dpadScaleRange =
+  document.getElementById('dpadScaleRange');
+
+const bScaleRange =
+  document.getElementById('bScaleRange');
+
+const aScaleRange =
+  document.getElementById('aScaleRange');
+
+const smallScaleRange =
+  document.getElementById('smallScaleRange');
+
+
+const dpadValue =
+  document.getElementById('dpadValue');
+
+const bValue =
+  document.getElementById('bValue');
+
+const aValue =
+  document.getElementById('aValue');
+
+const smallValue =
+  document.getElementById('smallValue');
+
+const dpadScaleValue =
+  document.getElementById('dpadScaleValue');
+
+const bScaleValue =
+  document.getElementById('bScaleValue');
+
+const aScaleValue =
+  document.getElementById('aScaleValue');
+
+const smallScaleValue =
+  document.getElementById('smallScaleValue');
+
+
+const grpDpad =
+  document.getElementById('grpDpad');
+
+const grpB =
+  document.getElementById('grpB');
+
+const grpA =
+  document.getElementById('grpA');
+
+const grpSmall =
+  document.getElementById('grpSmall');
+
+const grpSelect =
+  document.getElementById('grpSelect');
+
+const grpStart =
+  document.getElementById('grpStart');
+
+
+const defaultLayout = {
+
+  dpad: 0,
+  dpadY: 0,
+  dpadScale: 1,
+  b: 0,
+  bY: 0,
+  bScale: 1,
+  a: 0,
+  aY: 0,
+  aScale: 1,
+  small: 0,
+  smallY: 0,
+  smallScale: 1,
+  selectX: 0,
+  selectY: 0,
+  selectScale: 1,
+  startX: 0,
+  startY: 0,
+  startScale: 1
+
+};
+
+
+function applyLayout(layout) {
+
+  const d =
+    Number(layout.dpad) || 0;
+
+  const dY =
+    Number(layout.dpadY) || 0;
+
+  const dScale =
+    Number(layout.dpadScale) || 1;
+
+  const b =
+    Number(layout.b) || 0;
+
+  const bY =
+    Number(layout.bY) || 0;
+
+  const bScale =
+    Number(layout.bScale) || 1;
+
+  const a =
+    Number(layout.a) || 0;
+
+  const aY =
+    Number(layout.aY) || 0;
+
+  const aScale =
+    Number(layout.aScale) || 1;
+
+  const s =
+    Number(layout.small) || 0;
+
+  const sY =
+    Number(layout.smallY) || 0;
+
+  const sScale =
+    Number(layout.smallScale) || 1;
+
+  const selectX =
+    Number(layout.selectX) || 0;
+
+  const selectY =
+    Number(layout.selectY) || 0;
+
+  const selectScale =
+    Number(layout.selectScale) || 1;
+
+  const startX =
+    Number(layout.startX) || 0;
+
+  const startY =
+    Number(layout.startY) || 0;
+
+  const startScale =
+    Number(layout.startScale) || 1;
+
+
+  grpDpad.style.transform =
+    `translate(${d}px, ${dY}px) scale(${dScale})`;
+
+  grpB.style.transform =
+    `translate(${b}px, ${bY}px) rotate(-2deg) scale(${bScale})`;
+
+  grpA.style.transform =
+    `translate(${a}px, ${aY}px) scale(${aScale})`;
+
+  grpSmall.style.transform =
+    `translate(${s}px, ${sY}px) scale(${sScale})`;
+
+  grpSelect.style.transform =
+    `translate(${selectX}px, ${selectY}px) rotate(-26deg)  scale(${selectScale})`;
+
+  grpStart.style.transform =
+    `translate(${startX}px, ${startY}px) rotate(-26deg)  scale(${startScale})`;
+
+
+  dpadRange.value = d;
+  bRange.value = b;
+  aRange.value = a;
+  smallRange.value = s;
+
+
+  dpadValue.textContent = d;
+  bValue.textContent = b;
+  aValue.textContent = a;
+  smallValue.textContent = s;
+
+  dpadScaleRange.value = Math.round(dScale * 100);
+  bScaleRange.value = Math.round(bScale * 100);
+  aScaleRange.value = Math.round(aScale * 100);
+  smallScaleRange.value = Math.round(sScale * 100);
+
+  dpadScaleValue.textContent = `${Math.round(dScale * 100)}%`;
+  bScaleValue.textContent = `${Math.round(bScale * 100)}%`;
+  aScaleValue.textContent = `${Math.round(aScale * 100)}%`;
+  smallScaleValue.textContent = `${Math.round(sScale * 100)}%`;
+
+  grpDpad.dataset.y = dY;
+  grpDpad.dataset.scale = dScale;
+  grpDpad.dataset.x = d;
+  grpB.dataset.y = bY;
+  grpB.dataset.scale = bScale;
+  grpB.dataset.x = b;
+  grpA.dataset.y = aY;
+  grpA.dataset.scale = aScale;
+  grpA.dataset.x = a;
+  grpSmall.dataset.y = sY;
+  grpSmall.dataset.scale = sScale;
+  grpSmall.dataset.x = s;
+  grpSelect.dataset.x = selectX;
+  grpSelect.dataset.y = selectY;
+  grpSelect.dataset.scale = selectScale;
+  grpStart.dataset.x = startX;
+  grpStart.dataset.y = startY;
+  grpStart.dataset.scale = startScale;
+
+}
+
+
+function getLayout() {
+
+  return {
+
+    dpad:
+      Number(dpadRange.value),
+
+    dpadY:
+      Number(grpDpad.dataset.y) || 0,
+
+    dpadScale:
+      Number(dpadScaleRange.value) / 100 || 1,
+
+    b:
+      Number(bRange.value),
+
+    bY:
+      Number(grpB.dataset.y) || 0,
+
+    bScale:
+      Number(bScaleRange.value) / 100 || 1,
+
+    a:
+      Number(aRange.value),
+
+    aY:
+      Number(grpA.dataset.y) || 0,
+
+    aScale:
+      Number(aScaleRange.value) / 100 || 1,
+
+    small:
+      Number(smallRange.value),
+
+    smallY:
+      Number(grpSmall.dataset.y) || 0,
+
+    smallScale:
+      Number(smallScaleRange.value) / 100 || 1,
+
+    selectX:
+      Number(grpSelect.dataset.x) || 0,
+
+    selectY:
+      Number(grpSelect.dataset.y) || 0,
+
+    selectScale:
+      Number(grpSelect.dataset.scale) || 1,
+
+    startX:
+      Number(grpStart.dataset.x) || 0,
+
+    startY:
+      Number(grpStart.dataset.y) || 0,
+
+    startScale:
+      Number(grpStart.dataset.scale) || 1
+
+  };
+
+}
+
+
+function saveLayout() {
+
+  localStorage.setItem(
+    'gb_controls_layout',
+    JSON.stringify(
+      getLayout()
+    )
+  );
+
+}
+
+
+function loadLayout() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        'gb_controls_layout'
+      );
+
+    if (saved) {
+
+      applyLayout(
+        JSON.parse(saved)
+      );
+
+      return;
+
+    }
+
+  } catch {}
+
+  applyLayout(
+    defaultLayout
+  );
+
+}
+
+
+function updateEditor() {
+
+  applyLayout(
+    getLayout()
+  );
+
+}
+
+
+[
+  dpadRange,
+  bRange,
+  aRange,
+  smallRange,
+  dpadScaleRange,
+  bScaleRange,
+  aScaleRange,
+  smallScaleRange
+].forEach(range => {
+
+  range.addEventListener(
+    'input',
+    updateEditor
+  );
+
+});
+
+
+const draggableControls = [
+
+  {
+    element: grpDpad,
+    range: dpadRange,
+    yKey: 'y',
+    scaleKey: 'scale'
+  },
+
+  {
+    element: grpB,
+    range: bRange,
+    yKey: 'y',
+    scaleKey: 'scale'
+  },
+
+  {
+    element: grpA,
+    range: aRange,
+    yKey: 'y',
+    scaleKey: 'scale'
+  },
+
+  {
+    element: grpSelect,
+    range: null,
+    yKey: 'y',
+    scaleKey: 'scale'
+  },
+
+  {
+    element: grpStart,
+    range: null,
+    yKey: 'y',
+    scaleKey: 'scale'
+  }
+
+];
+
+
+function clamp(value, minimum, maximum) {
+
+  return Math.min(
+    Math.max(value, minimum),
+    maximum
+  );
+
+}
+
+
+draggableControls.forEach(control => {
+
+  let dragStart = null;
+
+  control.element.addEventListener(
+    'pointerdown',
+    event => {
+
+      if (!app.classList.contains('editing')) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      dragStart = {
+        x: event.clientX,
+        y: event.clientY,
+        offsetX: control.range
+          ? Number(control.range.value) || 0
+          : Number(control.element.dataset.x) || 0,
+        offsetY: Number(control.element.dataset.y) || 0,
+        dragging: false
+      };
+
+      control.element.setPointerCapture(
+        event.pointerId
+      );
+
+    }
+  );
+
+  control.element.addEventListener(
+    'pointermove',
+    event => {
+
+      if (!dragStart) return;
+
+      const deltaX =
+        event.clientX - dragStart.x;
+
+      const deltaY =
+        event.clientY - dragStart.y;
+
+      if (
+        !dragStart.dragging &&
+        Math.hypot(deltaX, deltaY) < 5
+      ) {
+
+        return;
+
+      }
+
+      if (!dragStart.dragging) {
+
+        dragStart.dragging = true;
+
+        event.preventDefault();
+
+        control.element.classList.remove(
+          'pressed'
+        );
+
+        setTouchInput(
+          control.element.dataset.key,
+          false
+        );
+
+      }
+
+      const nextX = clamp(
+        dragStart.offsetX + deltaX,
+        -100,
+        100
+      );
+
+      if (control.range) {
+
+        control.range.value = clamp(
+          nextX,
+          Number(control.range.min),
+          Number(control.range.max)
+        );
+
+      } else {
+
+        control.element.dataset.x = nextX;
+
+      }
+
+      control.element.dataset.y = clamp(
+        dragStart.offsetY + event.clientY - dragStart.y,
+        -100,
+        100
+      );
+
+      updateEditor();
+
+    }
+  );
+
+  control.element.addEventListener(
+    'pointerup',
+    () => {
+
+      if (dragStart?.dragging) {
+        saveLayout();
+      }
+
+      dragStart = null;
+    }
+  );
+
+  control.element.addEventListener(
+    'pointercancel',
+    () => {
+      dragStart = null;
+    }
+  );
+
+  control.element.addEventListener(
+    'wheel',
+    event => {
+
+      if (!app.classList.contains('editing')) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const currentScale =
+        Number(control.element.dataset.scale) || 1;
+
+      control.element.dataset.scale = clamp(
+        currentScale + (event.deltaY < 0 ? .05 : -.05),
+        .6,
+        1.5
+      ).toFixed(2);
+
+      updateEditor();
+
+    },
+    { passive: false }
+  );
+
+});
+
+
+btnEdit.addEventListener(
+  'click',
+  () => {
+
+    const editing =
+      !app.classList.contains('editing');
+
+    app.classList.toggle(
+      'editing',
+      editing
+    );
+
+    editor.classList.toggle(
+      'open',
+      editing
+    );
+
+    btnEdit.setAttribute(
+      'aria-label',
+      editing
+        ? 'Desativar ajustes'
+        : 'Ativar ajustes'
+    );
+
+    btnEdit.setAttribute(
+      'title',
+      editing
+        ? 'Desativar ajustes'
+        : 'Ativar ajustes'
+    );
+
+    showStatus(
+      editing
+        ? 'AJUSTES ATIVADOS'
+        : 'AJUSTES DESATIVADOS'
+    );
+
+  }
+);
+
+
+doneEdit.addEventListener(
+  'click',
+  () => {
+
+    saveLayout();
+
+    app.classList.remove(
+      'editing'
+    );
+
+    editor.classList.remove(
+      'open'
+    );
+
+    btnEdit.setAttribute(
+      'aria-label',
+      'Ativar ajustes'
+    );
+
+    btnEdit.setAttribute(
+      'title',
+      'Ativar ajustes'
+    );
+
+    showStatus(
+      'CONTROLES AJUSTADOS'
+    );
+
+  }
+);
+
+
+resetControls.addEventListener(
+  'click',
+  () => {
+
+    applyLayout(
+      defaultLayout
+    );
+
+    saveLayout();
+
+  }
+);
+
+
+/* =========================================================
+   FECHAMENTO DA PÁGINA
+========================================================= */
+
+window.addEventListener(
+  'pagehide',
+  () => {
+
+    /*
+      O IndexedDB já é o armazenamento principal.
+      Aqui fazemos apenas uma tentativa final
+      de guardar o SRAM atual.
+    */
+
+    if (
+      gameboy &&
+      currentRomName &&
+      gameboy.cartridge
+    ) {
+
+      try {
+
+        const saveData =
+          gameboy.getCartridgeSaveRam();
+
+        if (
+          saveData &&
+          saveData.byteLength
+        ) {
+
+          const base64 =
+            arrayBufferToBase64(
+              saveData
+            );
+
+          localStorage.setItem(
+            'gb_save_' + currentRomName,
+            base64
+          );
+
+        }
+
+      } catch {}
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+async function init() {
+
+  try {
+
+    showStatus(
+      'CARREGANDO EMULADOR...'
+    );
+
+
+    /*
+      Biblioteca que já estávamos usando
+      e que funcionou com nosso projeto.
+    */
+
+    const {
+      Gameboy
+    } = await import(
+      'https://esm.sh/gameboy-emulator@1.1.2'
+    );
+
+
+    /*
+      A biblioteca usa AudioWorklet + SharedArrayBuffer.
+      Esses recursos não funcionam ao abrir o HTML diretamente
+      pelo protocolo file://, então inicializamos sem áudio nesse caso.
+    */
+
+    if (
+      !window.isSecureContext ||
+      !window.crossOriginIsolated
+    ) {
+
+      class SilentAudioContext {
+
+        constructor() {
+
+          this.sampleRate = 44100;
+
+          this.destination = {};
+
+          this.audioWorklet = {
+            addModule() {
+              return new Promise(() => {});
+            }
+          };
+
+        }
+
+        suspend() {
+          return Promise.resolve();
+        }
+
+        resume() {
+          return Promise.resolve();
+        }
+
+      }
+
+      window.AudioContext = SilentAudioContext;
+      window.webkitAudioContext = SilentAudioContext;
+
+      showStatus(
+        'SISTEMA PRONTO • ÁUDIO DESATIVADO'
+      );
+
+    }
+
+
+    gameboy =
+      new Gameboy();
+
+
+    /*
+      Cada frame produzido pelo emulador
+      é desenhado diretamente no Canvas.
+    */
+
+   /* =========================================================
+   PALETA GAME BOY DMG-01
+========================================================= */
+
+function applyDMGPalette(imageData) {
+
+  const data = imageData.data;
+
+  /*
+    Paleta clássica inspirada no LCD
+    do Game Boy original DMG-01.
+  */
+
+  const palette = [
+    [15, 56, 15],      // mais escuro
+    [48, 98, 48],      // escuro
+    [139, 172, 15],    // claro
+    [155, 188, 15]     // mais claro
+  ];
+
+  for (let i = 0; i < data.length; i += 4) {
+
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+
+    /*
+      Como o Game Boy é monocromático,
+      transformamos o pixel em luminosidade.
+    */
+
+    const brightness =
+      0.299 * r +
+      0.587 * g +
+      0.114 * b;
+
+    let shade;
+
+    if (brightness < 64) {
+
+      shade = palette[0];
+
+    } else if (brightness < 128) {
+
+      shade = palette[1];
+
+    } else if (brightness < 192) {
+
+      shade = palette[2];
+
+    } else {
+
+      shade = palette[3];
+
+    }
+
+    data[i]     = shade[0];
+    data[i + 1] = shade[1];
+    data[i + 2] = shade[2];
+
+  }
+
+}
+
+
+
+   gameboy.onFrameFinished(
+        imageData => {
+
+      applyDMGPalette(imageData);
+
+       ctx.putImageData(
+        imageData,
+        0,
+        0
+      );
+  }
+);
+
+
+    /*
+      Teclado físico.
+    */
+
+    gameboy.keyboardManager.left =
+      'ArrowLeft';
+
+    gameboy.keyboardManager.right =
+      'ArrowRight';
+
+    gameboy.keyboardManager.up =
+      'ArrowUp';
+
+    gameboy.keyboardManager.down =
+      'ArrowDown';
+
+    gameboy.keyboardManager.a =
+      'KeyX';
+
+    gameboy.keyboardManager.b =
+      'KeyZ';
+
+    gameboy.keyboardManager.start =
+      'Enter';
+
+    gameboy.keyboardManager.select =
+      'ShiftLeft';
+
+
+    /* Layout */
+
+    loadLayout();
+
+
+    /*
+      Tenta recuperar a última ROM.
+    */
+
+    const autoRom =
+      await getFromDB(
+        'active_rom_buffer'
+      );
+
+    const autoName =
+      await getFromDB(
+        'active_rom_name'
+      );
+
+
+    if (
+      autoRom &&
+      autoName
+    ) {
+
+      currentRomBuffer =
+        autoRom;
+
+      currentRomName =
+        autoName;
+
+
+      try {
+
+        gameboy.loadGame(
+          autoRom
+        );
+
+        /*
+          MUITO IMPORTANTE:
+          depois do loadGame o cartridge
+          passa a existir.
+        */
+
+        setupSramAutoSave();
+
+
+        const restored =
+          await loadSaveState(true);
+
+
+        unlockAudio();
+
+        gameboy.run();
+
+        startAutosave();
+
+
+        if (restored) {
+
+          showStatus(
+            'RODANDO • SAVE RESTAURADO'
+          );
+
+        } else {
+
+          showStatus(
+            'RODANDO • ' +
+            autoName
+              .toUpperCase()
+              .replace(/_/g, ' ')
+          );
+
+        }
+
+      } catch (e) {
+
+        console.error(e);
+
+        showError(
+          'ERRO AO RESTAURAR ROM'
+        );
+
+      }
+
+    } else {
+
+      showStatus(
+        'SISTEMA PRONTO • CARREGUE UMA ROM'
+      );
+
+    }
+
+  } catch (e) {
+
+    console.error(e);
+
+    showError(
+      'NÃO FOI POSSÍVEL CARREGAR O EMULADOR'
+    );
+
+  }
+
+}
+
+async function prepareSprites() {
+
+  const sprites =
+    document.querySelectorAll(
+      '.dpadSprite, .buttonSprite'
+    );
+
+  await Promise.all(
+    [...sprites].map(async image => {
+
+      if (!image.complete) {
+
+        await new Promise(resolve => {
+
+          image.addEventListener(
+            'load',
+            resolve,
+            { once: true }
+          );
+
+        });
+
+      }
+
+      if (!image.naturalWidth) return;
+
+      const sourceCanvas =
+        document.createElement('canvas');
+
+      sourceCanvas.width = image.naturalWidth;
+      sourceCanvas.height = image.naturalHeight;
+
+      const sourceContext =
+        sourceCanvas.getContext('2d');
+
+      sourceContext.drawImage(image, 0, 0);
+
+      const sourceImage =
+        sourceContext.getImageData(
+          0,
+          0,
+          sourceCanvas.width,
+          sourceCanvas.height
+        );
+
+      let minX = sourceCanvas.width;
+      let minY = sourceCanvas.height;
+      let maxX = -1;
+      let maxY = -1;
+
+      for (let y = 0; y < sourceCanvas.height; y += 1) {
+
+        for (let x = 0; x < sourceCanvas.width; x += 1) {
+
+          const index =
+            (y * sourceCanvas.width + x) * 4;
+
+          const red = sourceImage.data[index];
+          const green = sourceImage.data[index + 1];
+          const blue = sourceImage.data[index + 2];
+
+          if (
+            red > 232 &&
+            green > 232 &&
+            blue > 232
+          ) {
+
+            sourceImage.data[index + 3] = 0;
+            continue;
+
+          }
+
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
+
+        }
+
+      }
+
+      if (maxX < 0) return;
+
+      sourceContext.putImageData(sourceImage, 0, 0);
+
+      const croppedCanvas =
+        document.createElement('canvas');
+
+      croppedCanvas.width = maxX - minX + 1;
+      croppedCanvas.height = maxY - minY + 1;
+
+      croppedCanvas
+        .getContext('2d')
+        .drawImage(
+          sourceCanvas,
+          minX,
+          minY,
+          croppedCanvas.width,
+          croppedCanvas.height,
+          0,
+          0,
+          croppedCanvas.width,
+          croppedCanvas.height
+        );
+
+      image.src =
+        croppedCanvas.toDataURL('image/png');
+
+      if (image.decode) {
+
+        await image.decode().catch(() => {});
+
+      }
+
+    })
+  );
+
+}
+
+
+prepareSprites()
+  .then(init);
+
+</script>
+
+</body>
+</html>

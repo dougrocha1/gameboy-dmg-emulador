@@ -6,13 +6,9 @@
 <title>Game Boy Canvas — Emulador</title>
 
 <style>
+* { box-sizing: border-box; }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -25,33 +21,22 @@ body {
   color: #eee;
 }
 
-/* =========================================================
-   APP / CORPO DO GAME BOY
-   ========================================================= */
-
 #app {
   position: relative;
   isolation: isolate;
   width: min(420px, 92vw);
   height: min(850px, 88vh);
-
   background-color: #c3c5bf;
   background-image: url('./assets/corpo%20gameboy.png.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-
   border-radius: 28px 28px 115px 28px;
   padding: 30px 24px 80px;
-
-  box-shadow:
-    0 22px 50px #0008,
-    inset 2px 2px 5px #fff8;
-
+  box-shadow: 0 22px 50px #0008, inset 2px 2px 5px #fff8;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   overflow: hidden !important;
 }
 
@@ -60,7 +45,6 @@ body {
   z-index: 1;
 }
 
-/* Esconde barra de rolagem */
 #app::-webkit-scrollbar {
   display: none;
 }
@@ -70,43 +54,37 @@ body {
   scrollbar-width: none;
 }
 
-/* =========================================================
-   CELULAR
-   ========================================================= */
-
 @media (max-width: 768px) {
+
   body {
     margin: 0;
     padding: 0;
+    width: 100%;
     height: 100dvh;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     background-color: #121212;
   }
 
   #app {
-    width: 100vw !important;
-    height: 100dvh !important;
-
-    max-width: none !important;
-    max-height: none !important;
-
-    border-radius: 0 !important;
-    box-shadow: none !important;
+    width: calc(100vw - 24px) !important;
+    height: calc(100dvh - 24px) !important;
+    max-width: 420px !important;
+    max-height: 850px !important;
+    border-radius: 28px 28px 90px 28px !important;
+    box-shadow:
+      0 15px 35px #0009,
+      inset 2px 2px 5px #fff8 !important;
 
     padding:
-      env(safe-area-inset-top, 20px)
-      16px
-      env(safe-area-inset-bottom, 30px);
+      max(env(safe-area-inset-top), 18px)
+      14px
+      max(env(safe-area-inset-bottom), 24px);
+
+    overflow: hidden !important;
   }
 }
-
-/* =========================================================
-   CAMADAS PRINCIPAIS
-   ========================================================= */
 
 #brand,
 #screenWrap,
@@ -120,10 +98,6 @@ body {
   z-index: 3 !important;
 }
 
-/* =========================================================
-   MARCA
-   ========================================================= */
-
 #brand {
   font-weight: 800;
   letter-spacing: 3px;
@@ -132,25 +106,16 @@ body {
   margin: 0 0 10px 6px;
 }
 
-/* =========================================================
-   IMAGEM SUPERIOR
-   ========================================================= */
-
 .consoleTopImage {
   position: absolute;
   z-index: 2;
-
   top: -18px;
   left: 50%;
-
   transform: translateX(-50%);
-
   display: none;
-
   width: 101%;
   height: auto;
   max-width: none;
-
   margin: 0;
 }
 
@@ -158,19 +123,11 @@ body {
   position: absolute;
 }
 
-/* =========================================================
-   TELA
-   ========================================================= */
-
 #screenWrap {
   position: relative;
-
   background: #5b5e58;
-
   border-radius: 10px 10px 42px 10px;
-
   padding: 18px 40px 14px 40px;
-
   box-shadow:
     inset 0 2px 7px #ffffff30,
     inset 0 -4px 8px #20221f99,
@@ -184,17 +141,12 @@ body {
 .topImage {
   position: absolute !important;
   z-index: 2;
-
   top: 8px;
   left: 25px;
-
   display: block;
-
   height: 28px;
   width: calc(100% - 50px);
-
   object-fit: contain;
-
   margin: 0;
 }
 
@@ -205,9 +157,7 @@ body {
 .screenHeader {
   display: flex;
   justify-content: flex-start;
-
   min-height: 20px;
-
   font-size: 8px;
   font-weight: 800;
   text-transform: uppercase;
@@ -219,28 +169,18 @@ body {
 
 .screenHeader small {
   flex: 1;
-
   color: #d5d8d3;
-
   font-size: 7px;
   letter-spacing: 1px;
-
   text-align: center;
 }
-
-/* =========================================================
-   POWER
-   ========================================================= */
 
 .powerIndicator {
   display: inline-flex;
   align-items: center;
-
   gap: 1px;
   min-width: 45px;
-
   color: #c1c4bf;
-
   font-size: 7px;
   letter-spacing: 2px;
   font-weight: 300;
@@ -248,17 +188,12 @@ body {
 
 .screenHeader > .powerIndicator:first-child {
   position: absolute !important;
-
   left: 1px !important;
   top: 40%;
-
   z-index: 3;
-
   flex-direction: column;
-
   gap: 1px;
   min-width: 15px;
-
   transform: translateY(-50%);
 }
 
@@ -270,40 +205,27 @@ body {
 #powerLed {
   width: 7px;
   height: 7px;
-
   border: 1px solid #171b16;
   border-radius: 50%;
-
   background: #281719;
-
   box-shadow: inset 0 1px 1px #0008;
 }
 
 #powerLed.is-on {
   background: #e32828;
-
   box-shadow:
     0 0 8px #ff3b3b,
     inset 1px 1px 1px #ffaaaa;
 }
 
-/* =========================================================
-   CANVAS / TELA DO GAME BOY
-   ========================================================= */
-
 canvas {
   display: block;
-
   width: 100%;
-  aspect-ratio: 160 / 120;
-
+  aspect-ratio: 160 / 144;
   image-rendering: pixelated;
-
   background: #20251f;
-
   border: 5px solid #272b25;
   border-radius: 4px;
-
   box-shadow:
     inset 0 0 0 2px #10130f,
     0 2px 2px #20221f99;
@@ -320,146 +242,90 @@ canvas {
 
 #status {
   text-align: center;
-
   color: #b8cfa1;
-
   font-size: 9px;
-
   margin-top: 6px;
-
   letter-spacing: 0.7px;
-
   min-height: 13px;
 }
-
-/* =========================================================
-   LOGO
-   ========================================================= */
 
 .consoleLogoArea {
   display: flex;
   align-items: center;
   justify-content: center;
-
   min-height: 25px;
+  width: 100%;
+  position: relative;
 }
 
 .consoleLogo {
-  width: min(220px, 35vw);
+  display: block;
+  width: min(220px, 55%);
   height: 50px;
-
   object-fit: contain;
-
   filter: contrast(1.05) saturate(0.8);
-
-  transform: translateX(-85px);
-
-  margin-top: 8px;
+  margin: 8px 0 0 -170px;
+  max-width: 100%;
 }
-
-/* =========================================================
-   CONTROLES
-   ========================================================= */
 
 .controls {
   display: flex;
-
   justify-content: space-between;
   align-items: center;
-
   margin-top: 20px;
-
   width: 100%;
-
   padding: 0 10px;
 }
 
 .dpadArea {
   display: flex;
-
   flex-direction: column;
   align-items: center;
-
   gap: 10px;
 }
-
-/* =========================================================
-   D-PAD
-   =========================================================
-   
-   A aparência do D-pad vem SOMENTE de:
-   
-       dpad.png
-   
-   Os elementos .pad não desenham nada.
-   Eles existem somente para receber toque/clique
-   e continuar funcionando com o JavaScript.
-   ========================================================= */
 
 .dpad {
   width: 110px;
   height: 110px;
-
   position: relative;
-
   filter: drop-shadow(0 5px 4px #0006);
 }
 
-/* Imagem real do D-pad */
 .dpadSprite {
   position: absolute;
-
   inset: 0;
-
   z-index: 1;
-
   display: block;
-
   width: 100%;
   height: 100%;
-
   object-fit: fill;
-
   pointer-events: none;
 }
 
-/* Áreas invisíveis de toque */
 .pad {
   position: absolute;
-
   z-index: 2;
-
   background: transparent !important;
   background-image: none !important;
-
   border: none !important;
-
   box-shadow: none !important;
-
   outline: none !important;
-
   color: transparent;
-
   appearance: none;
 }
 
-/* Área vertical */
 .v {
   width: 37px;
   height: 37px;
-
   left: 36px;
 }
 
-/* Área horizontal */
 .h {
   width: 37px;
   height: 37px;
-
   top: 36px;
 }
 
-/* Posição das áreas de toque */
 .v[data-key="up"] {
   top: 0;
 }
@@ -476,133 +342,111 @@ canvas {
   left: 73px;
 }
 
-/*
-   O hub antigo não é mais necessário.
-   A imagem dpad.png já desenha o centro.
-*/
 .hub {
   display: none !important;
 }
 
-/*
-   Remove completamente as setas que eram
-   criadas pelo CSS.
-*/
 .pad[data-key]::after {
   content: none !important;
 }
 
-/* =========================================================
-   BOTÕES A / B
-   ========================================================= */
-
 .actions {
   display: flex;
-
   gap: 10px;
-
   transform: rotate(-18deg);
 }
 
 button {
   font: inherit;
-
   cursor: pointer;
-
   touch-action: none;
-
   border: 0;
 }
 
 .ab {
   width: 52px;
   height: 52px;
-
   border-radius: 50%;
-
   position: relative;
-
   background: transparent;
-
   color: transparent;
-
   font-weight: 800;
-
   box-shadow: 0 4px 4px #0006;
-
   overflow: hidden;
 }
 
 .buttonSprite {
   position: absolute;
-
   inset: 0;
-
   z-index: 1;
-
   width: 100%;
   height: 100%;
-
   object-fit: fill;
-
   pointer-events: none;
 }
 
-/* =========================================================
-   SELECT / START
-   ========================================================= */
-
 .small {
   position: relative;
-
   display: flex;
-
   justify-content: center;
-
   gap: 20px;
-
   margin-top: 20px;
 }
 
 .smallControl {
   position: relative;
-
   display: block;
-
   flex: 0 0 auto;
 }
 
 .small button {
   position: relative;
-
   z-index: 2;
-
   display: block;
-
-  background: linear-gradient(
-    180deg,
-    #a8a8a8,
-    #3f433f
-  );
-
+  background: linear-gradient(180deg, #a8a8a8, #3f433f);
   color: #032848;
-
   border-radius: 14px;
-
   padding: 4px 18px;
-
   font-size: 11px;
-
   font-weight: 1000;
-
   letter-spacing: 0.4px;
-
   box-shadow: 0 3px 3px #0005;
 }
 
-/* =========================================================
-   MENU
-   ========================================================= */
+#power {
+  position: absolute !important;
+  top: 8px !important;
+  left: 43px !important;
+  width: 90px;
+  height: 20px;
+  z-index: 100 !important;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #383c38, #20231f);
+  color: #aeb3aa;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow:
+    0 3px 3px #0005,
+    inset 0 1px 1px #ffffff20;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+#power.is-on {
+  background: linear-gradient(180deg, #737870, #454a44);
+  color: #e2e5df;
+}
+
+#power.is-off {
+  background: linear-gradient(180deg, #383c38, #20231f);
+  color: #aeb3aa;
+}
+
+#power:active {
+  transform: translateY(1px);
+}
 
 .menuDrawer {
   margin-top: 12px;
@@ -610,90 +454,60 @@ button {
 
 #app > .menuDrawer {
   position: static !important;
-
   margin-top: 12px;
 }
 
 #menuToggle {
   position: absolute !important;
-
   display: block;
-
   width: 90px;
   height: 20px;
-
   top: 8px !important;
-  left: 43px !important;
-
+  right: 43px !important;
+  left: auto !important;
   transform: none !important;
-
   margin: 0 !important;
-
   border-radius: 14px;
-
-  background: linear-gradient(
-    180deg,
-    #666a64,
-    #3f433f
-  );
-
+  background: linear-gradient(180deg, #666a64, #3f433f);
   color: #e2e5df;
-
   font-size: 16px;
-
   font-weight: 600;
-
   line-height: 1;
-
   letter-spacing: 1px;
-
   box-shadow: 0 3px 3px #0005;
+  z-index: 100 !important;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
 
-  z-index: 10 !important;
+#menuToggle:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 2px #0005;
 }
 
 #menuToggle[aria-expanded="true"] {
-  background: linear-gradient(
-    180deg,
-    #454943,
-    #292c29
-  );
+  background: linear-gradient(180deg, #454943, #292c29);
 }
 
 .menu {
   position: absolute !important;
-
   top: 45px !important;
-
   left: 20px !important;
   right: 20px !important;
-
   width: auto !important;
-
   display: flex;
-
   flex-wrap: wrap;
-
   gap: 6px;
-
   max-height: 0;
-
   margin-top: 0 !important;
-
   overflow: hidden;
-
   opacity: 0;
-
   visibility: hidden;
-
   z-index: 99999 !important;
-
   background: rgba(35, 38, 35, 0.95);
-
   padding: 0 10px;
-
   border-radius: 10px;
-
   transition:
     max-height 0.25s ease,
     opacity 0.2s ease,
@@ -703,76 +517,43 @@ button {
 
 #app > .menuDrawer.open .menu {
   max-height: 250px !important;
-
   opacity: 1 !important;
-
   visibility: visible !important;
-
   padding: 10px !important;
 }
 
 .menu button {
   flex: 1 1 calc(50% - 4px);
-
   background: #2f332e;
-
   color: #d7ddcf;
-
   border-radius: 8px;
-
   padding: 5px;
-
   font-size: 11px;
 }
 
-/* =========================================================
-   HINT
-   ========================================================= */
-
 #hint {
   text-align: center;
-
   color: #3d403b;
-
   font-size: 9px;
-
   margin-top: 12px;
-
   line-height: 1.2;
 }
 
-/* =========================================================
-   EDITOR
-   ========================================================= */
-
 #editor {
   display: none;
-
   position: absolute !important;
-
   top: 45px !important;
-
   left: 50% !important;
   right: auto !important;
-
   width: min(270px, calc(100% - 24px)) !important;
-
   transform: translateX(-50%);
-
   margin-top: 0 !important;
-
   background: #c3c5bf;
-
   border-radius: 12px;
-
   padding: 10px;
-
   color: #292b28;
-
   box-shadow: 0 10px 25px #0006;
-
   z-index: 99999 !important;
-
   max-height: calc(100% - 58px);
   overflow-y: auto;
   scrollbar-width: none;
@@ -782,9 +563,10 @@ button {
   display: none;
 }
 
-/* A posição continua sendo feita arrastando os controles.
-   Os sliders de posição ficam invisíveis e continuam funcionando
-   internamente para preservar o sistema atual e os layouts salvos. */
+#editor.open {
+  display: block !important;
+}
+
 #editor .editRow > label:has(+ #dpadRange),
 #editor .editRow > label:has(+ #bRange),
 #editor .editRow > label:has(+ #aRange),
@@ -796,21 +578,11 @@ button {
   display: none !important;
 }
 
-#editor.open {
-  display: block !important;
-}
-
-/* =========================================================
-   MODO DE EDIÇÃO
-   ========================================================= */
-
 #app.editing .dpad,
 #app.editing .ab,
 #app.editing .smallControl {
   cursor: move;
-
   outline: 2px dashed #7b2841;
-
   outline-offset: 2px;
 }
 
@@ -820,7 +592,6 @@ button {
 
 #editor h3 {
   margin: 0 0 6px;
-
   font-size: 12px;
 }
 
@@ -830,11 +601,8 @@ button {
 
 .editRow label {
   display: flex;
-
   justify-content: space-between;
-
   font-size: 9px;
-
   margin-bottom: 2px;
 }
 
@@ -844,29 +612,18 @@ button {
 
 .editorButtons {
   display: flex;
-
   gap: 5px;
-
   margin-top: 7px;
 }
 
 .editorButtons button {
   flex: 1;
-
   padding: 5px;
-
   border-radius: 7px;
-
   background: #30342f;
-
   color: white;
-
   font-size: 9px;
 }
-
-/* =========================================================
-   POSIÇÕES EDITÁVEIS
-   ========================================================= */
 
 #grpDpad {
   transform: translate(0px, 0px);
@@ -884,15 +641,14 @@ button {
   transform: translate(0px, 0px);
 }
 
-/* =========================================================
-   CONTROLE PRESSIONADO
-   ========================================================= */
-
 .pressed {
   filter: brightness(0.75);
 }
 
-
+/* Boot */
+#screenWrap.booting canvas {
+  background: #9bbc0f;
+}
 </style>
 </head>
 
@@ -900,14 +656,20 @@ button {
 
 <div id="app">
 
-  <div id="brand">
-    
-  </div>
+  <div id="brand"></div>
 
   <img
     class="consoleTopImage"
     src="./assets/parte%20superior%20da%20tela.png.png"
     alt="Parte superior da tela">
+
+  <button
+    id="power"
+    class="is-off"
+    type="button"
+    aria-pressed="false">
+    ⏻ OFF
+  </button>
 
   <div id="screenWrap">
 
@@ -917,10 +679,18 @@ button {
       alt="Dot Matrix">
 
     <div class="screenHeader">
+
       <span class="powerIndicator">
-        <span id="powerLed" aria-label="Ligado"></span>
+
+        <span
+          id="powerLed"
+          aria-label="Desligado">
+        </span>
+
         BATTERY
+
       </span>
+
     </div>
 
     <canvas
@@ -930,7 +700,7 @@ button {
     </canvas>
 
     <div id="status">
-      INICIALIZANDO • EMULADOR
+      SISTEMA DESLIGADO
     </div>
 
   </div>
@@ -946,46 +716,45 @@ button {
 
   <div class="controls">
 
-    <!-- D-PAD -->
-
     <div class="dpadArea">
 
       <div
         class="dpad"
         id="grpDpad">
 
-    <img
-      class="dpadSprite"
-      src="./assets/dpad.png.png"
-      alt="">
+        <img
+          class="dpadSprite"
+          src="./assets/dpad.png.png"
+          alt="">
 
-  <div class="pad hub" aria-hidden="true"></div>
+        <div
+          class="pad hub"
+          aria-hidden="true">
+        </div>
 
-  <button
-    class="pad v"
-    data-key="up">
-  </button>
+        <button
+          class="pad v"
+          data-key="up">
+        </button>
 
-  <button
-    class="pad h"
-    data-key="left">
-  </button>
+        <button
+          class="pad h"
+          data-key="left">
+        </button>
 
-  <button
-    class="pad v"
-    data-key="down">
-  </button>
+        <button
+          class="pad v"
+          data-key="down">
+        </button>
 
-  <button
-    class="pad h"
-    data-key="right">
-  </button>
+        <button
+          class="pad h"
+          data-key="right">
+        </button>
 
       </div>
 
     </div>
-
-    <!-- A / B -->
 
     <div class="actions">
 
@@ -993,51 +762,63 @@ button {
         class="ab"
         id="grpB"
         data-key="b">
+
         <img
           class="buttonSprite"
           src="./assets/botao-b.png.png"
           alt="">
+
         B
+
       </button>
 
       <button
         class="ab"
         id="grpA"
         data-key="a">
+
         <img
           class="buttonSprite"
           src="./assets/botao-A.png.png"
           alt="">
+
         A
+
       </button>
 
     </div>
 
   </div>
 
-  <!-- SELECT / START -->
-
   <div
     class="small"
     id="grpSmall">
 
-    <span class="smallControl" id="grpSelect">
+    <span
+      class="smallControl"
+      id="grpSelect">
+
       <button data-key="select">
         SELECT
       </button>
+
     </span>
 
-    <span class="smallControl" id="grpStart">
+    <span
+      class="smallControl"
+      id="grpStart">
+
       <button data-key="start">
         START
       </button>
+
     </span>
 
   </div>
 
-  <!-- MENU -->
-
-  <div class="menuDrawer" id="menuDrawer">
+  <div
+    class="menuDrawer"
+    id="menuDrawer">
 
     <button
       id="menuToggle"
@@ -1045,10 +826,14 @@ button {
       aria-expanded="false"
       aria-controls="menu"
       aria-label="Abrir menu">
+
       Menu
+
     </button>
 
-    <div class="menu" id="menu">
+    <div
+      class="menu"
+      id="menu">
 
       <button id="load">
         📂 CARREGAR ROM
@@ -1062,29 +847,22 @@ button {
         ↻ RESET
       </button>
 
-      <button id="power">
-        ⏻ DESLIGAR
-      </button>
-
       <button
         id="btnEdit"
         aria-label="Ativar ajustes"
         title="Ativar ou desativar ajustes">
+
         ⚙️
+
       </button>
 
     </div>
+
   </div>
-
-  
-
-  <!-- EDITOR -->
 
   <div id="editor">
 
-    <h3>
-      AJUSTAR CONTROLES
-    </h3>
+    <h3>AJUSTAR CONTROLES</h3>
 
     <div class="editRow">
 
@@ -1105,7 +883,12 @@ button {
         <span id="dpadScaleValue">100%</span>
       </label>
 
-      <input id="dpadScaleRange" type="range" min="60" max="150" value="100">
+      <input
+        id="dpadScaleRange"
+        type="range"
+        min="60"
+        max="150"
+        value="100">
 
     </div>
 
@@ -1128,7 +911,12 @@ button {
         <span id="bScaleValue">100%</span>
       </label>
 
-      <input id="bScaleRange" type="range" min="60" max="150" value="100">
+      <input
+        id="bScaleRange"
+        type="range"
+        min="60"
+        max="150"
+        value="100">
 
     </div>
 
@@ -1151,7 +939,12 @@ button {
         <span id="aScaleValue">100%</span>
       </label>
 
-      <input id="aScaleRange" type="range" min="60" max="150" value="100">
+      <input
+        id="aScaleRange"
+        type="range"
+        min="60"
+        max="150"
+        value="100">
 
     </div>
 
@@ -1174,7 +967,12 @@ button {
         <span id="smallScaleValue">100%</span>
       </label>
 
-      <input id="smallScaleRange" type="range" min="60" max="150" value="100">
+      <input
+        id="smallScaleRange"
+        type="range"
+        min="60"
+        max="150"
+        value="100">
 
     </div>
 
@@ -1194,24 +992,20 @@ button {
 
 </div>
 
-
 <script type="module">
-
 'use strict';
 
-/* =========================================================
-   CANVAS
-========================================================= */
+/* =====================================================
+   ELEMENTOS PRINCIPAIS
+   ===================================================== */
 
-const canvas = document.getElementById('screen');
-const ctx = canvas.getContext('2d');
+const canvas =
+  document.getElementById('screen');
+
+const ctx =
+  canvas.getContext('2d');
 
 ctx.imageSmoothingEnabled = false;
-
-
-/* =========================================================
-   STATUS
-========================================================= */
 
 const statusEl =
   document.getElementById('status');
@@ -1222,12 +1016,73 @@ const screenWrap =
 const powerLed =
   document.getElementById('powerLed');
 
+const powerButton =
+  document.getElementById('power');
+
+
+/* =====================================================
+   STATUS / TELA
+   ===================================================== */
+
 function showStatus(text) {
   statusEl.textContent = text;
 }
 
 function showError(text) {
   statusEl.textContent = 'ERRO • ' + text;
+}
+
+function paintPoweredOffScreen() {
+
+  ctx.fillStyle = '#283603';
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+}
+
+function paintBootScreen() {
+
+  ctx.fillStyle = '#9bbc0f';
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  ctx.fillStyle = '#0f380f';
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.font =
+    'bold 19px Arial, sans-serif';
+
+  ctx.fillText(
+    'Nintendo',
+    canvas.width / 2,
+    canvas.height / 2 - 8
+  );
+
+  ctx.fillText(
+    'Nintendo',
+    canvas.width / 2 + 1,
+    canvas.height / 2 - 8
+  );
+
+  ctx.font =
+    'bold 9px Arial, sans-serif';
+
+  ctx.fillText(
+    'byDougX',
+    canvas.width / 2,
+    canvas.height / 2 + 13
+  );
 }
 
 function updatePowerVisual(isPoweredOn) {
@@ -1237,6 +1092,11 @@ function updatePowerVisual(isPoweredOn) {
     !isPoweredOn
   );
 
+  screenWrap.classList.toggle(
+    'booting',
+    false
+  );
+
   powerLed.classList.toggle(
     'is-on',
     isPoweredOn
@@ -1244,26 +1104,36 @@ function updatePowerVisual(isPoweredOn) {
 
   powerLed.setAttribute(
     'aria-label',
-    isPoweredOn ? 'Ligado' : 'Desligado'
+    isPoweredOn
+      ? 'Ligado'
+      : 'Desligado'
   );
 
+  powerButton.classList.toggle(
+    'is-on',
+    isPoweredOn
+  );
+
+  powerButton.classList.toggle(
+    'is-off',
+    !isPoweredOn
+  );
+
+  powerButton.textContent =
+    isPoweredOn
+      ? '⏻ ON'
+      : '⏻ OFF';
+
+  powerButton.setAttribute(
+    'aria-pressed',
+    String(isPoweredOn)
+  );
 }
 
-///pinta a tela de verde escuro quando desligado///
 
-function paintPoweredOffScreen() {
-
-  ctx.fillStyle = '#283603';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-}
-
-updatePowerVisual(true);
-
-
-/* =========================================================
-   EMULADOR
-========================================================= */
+/* =====================================================
+   ESTADO DO EMULADOR
+   ===================================================== */
 
 let gameboy = null;
 
@@ -1271,9 +1141,10 @@ let currentRomName = null;
 
 let currentRomBuffer = null;
 
-let emulatorPoweredOn = true;
+let emulatorPoweredOn = false;
 
 let pendingFrameId = null;
+
 
 const nativeRequestAnimationFrame =
   window.requestAnimationFrame.bind(window);
@@ -1281,144 +1152,406 @@ const nativeRequestAnimationFrame =
 const nativeCancelAnimationFrame =
   window.cancelAnimationFrame.bind(window);
 
-window.requestAnimationFrame = callback => {
 
-  if (!emulatorPoweredOn) {
+/*
+  Bloqueia requestAnimationFrame quando o
+  console está desligado.
+*/
 
-    return 0;
+window.requestAnimationFrame =
+  callback => {
 
-  }
+    if (!emulatorPoweredOn) {
+      return 0;
+    }
 
-  pendingFrameId =
-    nativeRequestAnimationFrame(timestamp => {
+    pendingFrameId =
+      nativeRequestAnimationFrame(
+        timestamp => {
 
-      pendingFrameId = null;
+          pendingFrameId = null;
 
-      callback(timestamp);
+          callback(timestamp);
+        }
+      );
 
-    });
+    return pendingFrameId;
+  };
 
-  return pendingFrameId;
 
-};
+/* =====================================================
+   AUTOSAVE
+   ===================================================== */
 
 let autosaveTimer = null;
 
 let sramSaveTimer = null;
 
+
+/* =====================================================
+   GAME BOY BOOT SOUND
+   ===================================================== */
+
+/*
+  IMPORTANTE:
+
+  O MP3 precisa estar em:
+
+  assets/gameboy-startup.mp3
+*/
+
+const NativeAudioContext =
+  window.AudioContext ||
+  window.webkitAudioContext;
+
+let bootAudioContext = null;
+
+let soundEnabled = true;
+
 let audioUnlocked = false;
 
 
-/* =========================================================
-   INDEXED DB
-========================================================= */
+/* =====================================================
+   AUDIO CONTEXT
+   ===================================================== */
 
-const DB_NAME = 'GB_Emulator_Storage';
+function getBootAudioContext() {
 
-const STORE_NAME = 'rom_data';
+  if (!NativeAudioContext) {
+    return null;
+  }
+
+  if (!bootAudioContext) {
+
+    bootAudioContext =
+      new NativeAudioContext();
+  }
+
+  return bootAudioContext;
+}
+
+
+async function unlockBootAudio() {
+
+  const audio =
+    getBootAudioContext();
+
+  if (!audio) {
+    return;
+  }
+
+  try {
+
+    if (audio.state === 'suspended') {
+
+      await audio.resume();
+    }
+
+  } catch (e) {
+
+    console.warn(
+      'Não foi possível liberar o áudio:',
+      e
+    );
+  }
+}
+
+
+/* =====================================================
+   UNLOCK AUDIO
+   ===================================================== */
+
+async function unlockAudio() {
+
+  audioUnlocked = true;
+
+  try {
+
+    await unlockBootAudio();
+
+  } catch (e) {
+
+    console.warn(
+      'Áudio não pôde ser desbloqueado:',
+      e
+    );
+  }
+}
+
+
+/* =====================================================
+   GAME BOY STARTUP MP3
+   ===================================================== */
+
+const bootAudio =
+  new Audio(
+    'assets/gameboy-startup.mp3'
+  );
+
+
+/*
+  Configuração do áudio.
+*/
+
+bootAudio.preload = 'auto';
+
+bootAudio.volume = 0.8;
+
+
+/*
+  Pré-carrega o arquivo.
+*/
+
+bootAudio.load();
+
+
+/*
+  Diagnóstico se o arquivo não existir
+  ou não puder ser carregado.
+*/
+
+bootAudio.addEventListener(
+  'error',
+  event => {
+
+    console.error(
+      'ERRO AO CARREGAR O GAME BOY STARTUP MP3',
+      event
+    );
+
+    console.error(
+      'Confira se existe:',
+      'assets/gameboy-startup.mp3'
+    );
+  }
+);
+
+
+/*
+  Diagnóstico quando o áudio realmente
+  começa a tocar.
+*/
+
+bootAudio.addEventListener(
+  'play',
+  () => {
+
+    console.log(
+      '🎵 GAME BOY STARTUP: PLAY'
+    );
+  }
+);
+
+
+/*
+  Diagnóstico quando o áudio termina.
+*/
+
+bootAudio.addEventListener(
+  'ended',
+  () => {
+
+    console.log(
+      '🎵 GAME BOY STARTUP: FIM'
+    );
+  }
+);
+
+
+/* =====================================================
+   TOCAR GAME BOY STARTUP
+   ===================================================== */
+
+function playGameBoyBootSound() {
+
+  if (!soundEnabled) {
+    return;
+  }
+
+  try {
+
+    /*
+      Para qualquer reprodução anterior.
+    */
+
+    bootAudio.pause();
+
+    /*
+      Volta para o começo.
+    */
+
+    bootAudio.currentTime = 0;
+
+    /*
+      IMPORTANTE:
+
+      Essa chamada acontece diretamente
+      dentro do clique do botão ON.
+
+      Isso aumenta muito a chance do Chrome
+      aceitar o áudio.
+    */
+
+    const promise =
+      bootAudio.play();
+
+    if (promise !== undefined) {
+
+      promise.catch(error => {
+
+        console.warn(
+          'Chrome bloqueou o boot sound:',
+          error
+        );
+
+      });
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Erro ao tocar Game Boy startup sound:',
+      error
+    );
+  }
+}
+
+
+/* =====================================================
+   DATABASE
+   ===================================================== */
+
+const DB_NAME =
+  'GB_Emulator_Storage';
+
+const STORE_NAME =
+  'rom_data';
 
 
 function openDB() {
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    const request =
-      indexedDB.open(DB_NAME, 1);
+      const request =
+        indexedDB.open(
+          DB_NAME,
+          1
+        );
 
-    request.onupgradeneeded = () => {
+      request.onupgradeneeded = () => {
 
-      const db = request.result;
+        const db =
+          request.result;
 
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        if (
+          !db.objectStoreNames.contains(
+            STORE_NAME
+          )
+        ) {
 
-        db.createObjectStore(STORE_NAME);
+          db.createObjectStore(
+            STORE_NAME
+          );
+        }
+      };
 
-      }
+      request.onsuccess = () =>
+        resolve(request.result);
 
-    };
-
-    request.onsuccess = () => {
-
-      resolve(request.result);
-
-    };
-
-    request.onerror = () => {
-
-      reject(request.error);
-
-    };
-
-  });
-
+      request.onerror = () =>
+        reject(request.error);
+    }
+  );
 }
 
 
-async function saveToDB(key, value) {
+async function saveToDB(
+  key,
+  value
+) {
 
-  const db = await openDB();
+  const db =
+    await openDB();
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    const tx =
-      db.transaction(STORE_NAME, 'readwrite');
+      const tx =
+        db.transaction(
+          STORE_NAME,
+          'readwrite'
+        );
 
-    tx.objectStore(STORE_NAME)
-      .put(value, key);
+      tx
+        .objectStore(STORE_NAME)
+        .put(
+          value,
+          key
+        );
 
-    tx.oncomplete = () => {
+      tx.oncomplete = () => {
 
-      db.close();
-      resolve();
+        db.close();
 
-    };
+        resolve();
+      };
 
-    tx.onerror = () => {
+      tx.onerror = () => {
 
-      db.close();
-      reject(tx.error);
+        db.close();
 
-    };
-
-  });
-
+        reject(tx.error);
+      };
+    }
+  );
 }
 
 
 async function getFromDB(key) {
 
-  const db = await openDB();
+  const db =
+    await openDB();
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    const tx =
-      db.transaction(STORE_NAME, 'readonly');
+      const tx =
+        db.transaction(
+          STORE_NAME,
+          'readonly'
+        );
 
-    const request =
-      tx.objectStore(STORE_NAME).get(key);
+      const request =
+        tx
+          .objectStore(STORE_NAME)
+          .get(key);
 
-    request.onsuccess = () => {
+      request.onsuccess = () => {
 
-      db.close();
-      resolve(request.result);
+        db.close();
 
-    };
+        resolve(
+          request.result
+        );
+      };
 
-    request.onerror = () => {
+      request.onerror = () => {
 
-      db.close();
-      reject(request.error);
+        db.close();
 
-    };
-
-  });
-
+        reject(
+          request.error
+        );
+      };
+    }
+  );
 }
 
 
-/* =========================================================
-   BASE64
-========================================================= */
+/* =====================================================
+   SAVE CONVERSÃO
+   ===================================================== */
 
 function arrayBufferToBase64(buffer) {
 
@@ -1435,14 +1568,16 @@ function arrayBufferToBase64(buffer) {
     i += chunk
   ) {
 
-    binary += String.fromCharCode(
-      ...bytes.subarray(i, i + chunk)
-    );
-
+    binary +=
+      String.fromCharCode(
+        ...bytes.subarray(
+          i,
+          i + chunk
+        )
+      );
   }
 
   return btoa(binary);
-
 }
 
 
@@ -1452,7 +1587,9 @@ function base64ToArrayBuffer(base64) {
     atob(base64);
 
   const bytes =
-    new Uint8Array(binary.length);
+    new Uint8Array(
+      binary.length
+    );
 
   for (
     let i = 0;
@@ -1462,58 +1599,72 @@ function base64ToArrayBuffer(base64) {
 
     bytes[i] =
       binary.charCodeAt(i);
-
   }
 
   return bytes.buffer;
-
 }
 
 
-/* =========================================================
-   SOM
-========================================================= */
+/* =====================================================
+   BOTÃO SOM
+   ===================================================== */
 
-function unlockAudio() {
+document
+  .getElementById('sound')
+  .addEventListener(
+    'click',
+    async () => {
 
-  if (audioUnlocked) return;
+      /*
+        Mantemos o botão como ativação/liberação
+        de áudio, sem alterar o comportamento
+        original do projeto.
+      */
 
-  audioUnlocked = true;
+      soundEnabled = true;
 
-  try {
+      await unlockAudio();
 
-    window.dispatchEvent(
-      new Event('click')
-    );
+      /*
+        Também fazemos um teste direto do MP3
+        porque esse clique é uma interação
+        real do usuário.
+      */
 
-  } catch {}
+      try {
 
-}
+        bootAudio.pause();
 
+        bootAudio.currentTime = 0;
 
-document.getElementById('sound')
-  .addEventListener('click', () => {
+        await bootAudio.play();
 
-    unlockAudio();
+        showStatus(
+          'SOM • ATIVADO'
+        );
 
-    if (gameboy) {
+      } catch (e) {
 
-      showStatus('SOM • ATIVADO');
+        console.warn(
+          'Teste de som falhou:',
+          e
+        );
 
-    } else {
-
-      showStatus('SISTEMA PRONTO');
-
+        showStatus(
+          'SOM • BLOQUEADO PELO NAVEGADOR'
+        );
+      }
     }
+  );
 
-  });
 
+/* =====================================================
+   SAVE STATE
+   ===================================================== */
 
-/* =========================================================
-   SRAM / SAVE NORMAL DO JOGO
-========================================================= */
-
-async function saveState(isAuto = false) {
+async function saveState(
+  isAuto = false
+) {
 
   if (
     !gameboy ||
@@ -1522,7 +1673,6 @@ async function saveState(isAuto = false) {
   ) {
 
     return false;
-
   }
 
   try {
@@ -1540,28 +1690,22 @@ async function saveState(isAuto = false) {
         showStatus(
           'ESTE JOGO NÃO POSSUI SAVE SRAM'
         );
-
       }
 
       return false;
-
     }
-
-
-    /* IndexedDB */
 
     await saveToDB(
       'save_' + currentRomName,
       saveData
     );
 
-
-    /* Backup localStorage */
-
     try {
 
       const base64 =
-        arrayBufferToBase64(saveData);
+        arrayBufferToBase64(
+          saveData
+        );
 
       localStorage.setItem(
         'gb_save_' + currentRomName,
@@ -1574,16 +1718,13 @@ async function saveState(isAuto = false) {
         'Backup localStorage indisponível:',
         e
       );
-
     }
-
 
     if (!isAuto) {
 
       showStatus(
         'PROGRESSO DO JOGO SALVO'
       );
-
     }
 
     return true;
@@ -1600,17 +1741,20 @@ async function saveState(isAuto = false) {
       showError(
         'NÃO FOI POSSÍVEL SALVAR'
       );
-
     }
 
     return false;
-
   }
-
 }
 
 
-async function loadSaveState(isAuto = false) {
+/* =====================================================
+   LOAD SAVE
+   ===================================================== */
+
+async function loadSaveState(
+  isAuto = false
+) {
 
   if (
     !gameboy ||
@@ -1619,7 +1763,6 @@ async function loadSaveState(isAuto = false) {
   ) {
 
     return false;
-
   }
 
   try {
@@ -1629,23 +1772,22 @@ async function loadSaveState(isAuto = false) {
         'save_' + currentRomName
       );
 
-
-    /* Fallback */
-
     if (!saveData) {
 
       try {
 
         const raw =
           localStorage.getItem(
-            'gb_save_' + currentRomName
+            'gb_save_' +
+            currentRomName
           );
 
         if (raw) {
 
           saveData =
-            base64ToArrayBuffer(raw);
-
+            base64ToArrayBuffer(
+              raw
+            );
         }
 
       } catch (e) {
@@ -1654,11 +1796,8 @@ async function loadSaveState(isAuto = false) {
           'Fallback localStorage falhou:',
           e
         );
-
       }
-
     }
-
 
     if (saveData) {
 
@@ -1671,11 +1810,9 @@ async function loadSaveState(isAuto = false) {
         showStatus(
           'SAVE DO JOGO RESTAURADO'
         );
-
       }
 
       return true;
-
     }
 
   } catch (e) {
@@ -1690,19 +1827,16 @@ async function loadSaveState(isAuto = false) {
       showError(
         'ERRO AO RESTAURAR SAVE'
       );
-
     }
-
   }
 
   return false;
-
 }
 
 
-/* =========================================================
-   AUTO SAVE QUANDO O CARTUCHO ESCREVE NA SRAM
-========================================================= */
+/* =====================================================
+   SRAM AUTO SAVE
+   ===================================================== */
 
 function setupSramAutoSave() {
 
@@ -1712,23 +1846,28 @@ function setupSramAutoSave() {
   ) {
 
     return;
-
   }
 
   try {
 
-    gameboy.setOnWriteToCartridgeRam(() => {
+    gameboy.setOnWriteToCartridgeRam(
+      () => {
 
-      clearTimeout(sramSaveTimer);
+        clearTimeout(
+          sramSaveTimer
+        );
 
-      sramSaveTimer =
-        setTimeout(() => {
+        sramSaveTimer =
+          setTimeout(
+            () => {
 
-          saveState(true);
+              saveState(true);
 
-        }, 500);
-
-    });
+            },
+            500
+          );
+      }
+    );
 
   } catch (e) {
 
@@ -1736,27 +1875,23 @@ function setupSramAutoSave() {
       'Auto-save SRAM indisponível:',
       e
     );
-
   }
-
 }
 
-
-/* =========================================================
-   BACKUP PERIÓDICO
-========================================================= */
 
 function startAutosave() {
 
   stopAutosave();
 
   autosaveTimer =
-    setInterval(() => {
+    setInterval(
+      () => {
 
-      saveState(true);
+        saveState(true);
 
-    }, 8000);
-
+      },
+      8000
+    );
 }
 
 
@@ -1764,145 +1899,164 @@ function stopAutosave() {
 
   if (autosaveTimer) {
 
-    clearInterval(autosaveTimer);
+    clearInterval(
+      autosaveTimer
+    );
 
     autosaveTimer = null;
-
   }
-
 }
 
 
-/* =========================================================
+
+/* =====================================================
    CARREGAR ROM
-========================================================= */
+   ===================================================== */
 
 async function loadROM(
   buffer,
   name
 ) {
 
+  console.log('=== LOAD ROM INICIADO ===');
+  console.log('Nome:', name);
+  console.log('Buffer:', buffer);
+  console.log('Tamanho:', buffer?.byteLength);
+
   if (!gameboy) {
+
+    console.error('ERRO: gameboy não inicializado');
 
     showError(
       'EMULADOR NÃO INICIALIZADO'
     );
 
     return;
-
   }
 
   try {
 
+    console.log('1. Parando autosave...');
+
     stopAutosave();
 
-    if (pendingFrameId !== null) {
+    if (
+      pendingFrameId !== null
+    ) {
+
+      console.log('2. Cancelando animation frame...');
 
       nativeCancelAnimationFrame(
         pendingFrameId
       );
 
       pendingFrameId = null;
-
     }
 
-    emulatorPoweredOn = true;
+    /*
+      A ROM é carregada/preparada,
+      mas o aparelho continua DESLIGADO.
+    */
 
-    updatePowerVisual(true);
+    emulatorPoweredOn = false;
 
-    document.getElementById('power')
-      .textContent = '⏻ DESLIGAR';
+    updatePowerVisual(false);
 
+    paintPoweredOffScreen();
+
+    console.log('3. Preparando ROM...');
 
     currentRomBuffer = buffer;
 
     currentRomName =
-      name
-        .replace(/[^a-zA-Z0-9]/g, '_');
+      name.replace(
+        /[^a-zA-Z0-9]/g,
+        '_'
+      );
 
+    console.log(
+      'Nome interno:',
+      currentRomName
+    );
 
-    /* Guarda ROM */
+    console.log('4. Salvando ROM no IndexedDB...');
 
     await saveToDB(
       'active_rom_buffer',
       buffer
     );
 
+    console.log('5. ROM salva no IndexedDB.');
+
     await saveToDB(
       'active_rom_name',
       currentRomName
     );
 
+    console.log('6. Nome salvo no IndexedDB.');
 
-    /* Carrega ROM */
+    /*
+      Prepara o cartucho.
+      Não inicia o jogo.
+    */
+
+    console.log('7. Chamando gameboy.loadGame()...');
 
     gameboy.loadGame(
       buffer
     );
 
-
-    /*
-      IMPORTANTE:
-      o cartridge só existe depois
-      do loadGame()
-    */
+    console.log('8. gameboy.loadGame() terminou.');
 
     setupSramAutoSave();
 
+    console.log('9. Carregando save state...');
 
-    /*
-      Restaura o save ANTES de iniciar
-      a execução do jogo
-    */
+    await loadSaveState(true);
 
-    const restored =
-      await loadSaveState(true);
+    console.log('10. Save state carregado.');
 
+    showStatus(
+      'ROM PRONTA • APERTE ON'
+    );
 
-    unlockAudio();
-
-    gameboy.run();
-
-
-    if (restored) {
-
-      showStatus(
-        'RODANDO • SAVE RESTAURADO'
-      );
-
-    } else {
-
-      showStatus(
-        'RODANDO • ' +
-        name
-          .toUpperCase()
-          .replace(/\.[^.]+$/, '')
-      );
-
-    }
-
-
-    startAutosave();
+    console.log('=== LOAD ROM CONCLUÍDO ===');
 
   } catch (e) {
 
-    console.error(e);
-
-    showError(
-      'NÃO FOI POSSÍVEL CARREGAR A ROM'
+    console.error(
+      '=== ERRO AO CARREGAR ROM ==='
     );
 
-  }
+    console.error(e);
 
+    console.error(
+      'Mensagem:',
+      e?.message
+    );
+
+    console.error(
+      'Stack:',
+      e?.stack
+    );
+
+    showError(
+      'ERRO AO CARREGAR ROM — VEJA O CONSOLE'
+    );
+  }
 }
 
 
-/* =========================================================
+
+
+/* =====================================================
    INPUT DE ROM
-========================================================= */
+   ===================================================== */
 
 const fileInput =
-  document.createElement('input');
+  document.createElement(
+    'input'
+  );
 
 fileInput.type = 'file';
 
@@ -1917,14 +2071,17 @@ document.body.appendChild(
 );
 
 
-document.getElementById('load')
-  .addEventListener('click', () => {
+document
+  .getElementById('load')
+  .addEventListener(
+    'click',
+    () => {
 
-    unlockAudio();
+      unlockAudio();
 
-    fileInput.click();
-
-  });
+      fileInput.click();
+    }
+  );
 
 
 fileInput.addEventListener(
@@ -1934,7 +2091,9 @@ fileInput.addEventListener(
     const file =
       fileInput.files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     try {
 
@@ -1957,60 +2116,273 @@ fileInput.addEventListener(
     }
 
     fileInput.value = '';
-
   }
 );
 
 
-/* =========================================================
+/* =====================================================
    RESET
-========================================================= */
+   ===================================================== */
 
-document.getElementById('reset')
-  ?.addEventListener('click', async () => {
+document
+  .getElementById('reset')
+  ?.addEventListener(
+    'click',
+    async () => {
 
-    if (
-      !currentRomBuffer ||
-      !currentRomName
-    ) {
+      if (
+        !currentRomBuffer ||
+        !currentRomName
+      ) {
 
-      showStatus(
-        'NENHUMA ROM CARREGADA'
-      );
+        showStatus(
+          'NENHUMA ROM CARREGADA'
+        );
 
-      return;
+        return;
+      }
 
+      if (!gameboy) {
+
+        showStatus(
+          'EMULADOR NÃO INICIALIZADO'
+        );
+
+        return;
+      }
+
+      if (!emulatorPoweredOn) {
+
+        showStatus(
+          'CONSOLE DESLIGADO • APERTE ON'
+        );
+
+        return;
+      }
+
+      unlockAudio();
+
+      await saveState(true);
+
+      try {
+
+        stopAutosave();
+
+        if (
+          pendingFrameId !== null
+        ) {
+
+          nativeCancelAnimationFrame(
+            pendingFrameId
+          );
+
+          pendingFrameId = null;
+        }
+
+        gameboy.loadGame(
+          currentRomBuffer
+        );
+
+        setupSramAutoSave();
+
+        await loadSaveState(true);
+
+        if (!emulatorPoweredOn) {
+          return;
+        }
+
+        gameboy.run();
+
+        startAutosave();
+
+        showStatus(
+          'JOGO REINICIADO'
+        );
+
+      } catch (e) {
+
+        console.error(e);
+
+        showError(
+          'ERRO AO REINICIAR'
+        );
+      }
     }
+  );
+
+
+/* =====================================================
+   BOTÃO POWER
+   ===================================================== */
+
+powerButton.addEventListener(
+  'click',
+  async () => {
+
+    /*
+      Desbloqueia o áudio pelo gesto
+      do usuário.
+    */
 
     unlockAudio();
 
-    /*
-      Reset reinicia o jogo.
-      O SRAM continua preservado.
-    */
 
-    await saveState(true);
+    /* =================================================
+       DESLIGAR
+       ================================================= */
 
-    try {
+    if (emulatorPoweredOn) {
 
-      stopAutosave();
+      /*
+        Para o MP3 caso ainda esteja tocando.
+      */
 
-      if (pendingFrameId !== null) {
+      bootAudio.pause();
+
+      try {
+
+        await saveState(true);
+
+      } catch (e) {
+
+        console.warn(
+          'Erro ao salvar ao desligar:',
+          e
+        );
+      }
+
+      emulatorPoweredOn = false;
+
+      if (
+        pendingFrameId !== null
+      ) {
 
         nativeCancelAnimationFrame(
           pendingFrameId
         );
 
         pendingFrameId = null;
-
       }
 
-      emulatorPoweredOn = true;
+      stopAutosave();
 
-      updatePowerVisual(true);
+      paintPoweredOffScreen();
 
-      document.getElementById('power')
-        .textContent = '⏻ DESLIGAR';
+      updatePowerVisual(false);
+
+      showStatus(
+        'EMULADOR DESLIGADO'
+      );
+
+      return;
+    }
+
+
+    /* =================================================
+       LIGAR
+       ================================================= */
+
+    emulatorPoweredOn = true;
+
+    updatePowerVisual(true);
+
+    screenWrap.classList.add(
+      'booting'
+    );
+
+    screenWrap.classList.remove(
+      'powered-off'
+    );
+
+    paintBootScreen();
+
+
+    /*
+      =================================================
+      IMPORTANTE PARA O CHROME
+      =================================================
+
+      O MP3 é iniciado ANTES de qualquer await.
+
+      Assim o navegador entende que a reprodução
+      veio diretamente do clique no botão ON.
+    */
+
+    playGameBoyBootSound();
+
+
+    /*
+      Depois liberamos o AudioContext.
+    */
+
+    await unlockBootAudio();
+
+
+    showStatus(
+      'NINTENDO • by DougX'
+    );
+
+
+    /*
+      Mantém a tela de boot por 3 segundos.
+    */
+
+    await new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          3000
+        )
+    );
+
+
+    if (!emulatorPoweredOn) {
+      return;
+    }
+
+    screenWrap.classList.remove(
+      'booting'
+    );
+
+
+    /*
+      Se não houver ROM,
+      fica apenas na tela de sistema.
+    */
+
+    if (!currentRomBuffer) {
+
+      showStatus(
+        'SISTEMA PRONTO • CARREGUE UMA ROM'
+      );
+
+      return;
+    }
+
+
+    /* =================================================
+       INICIAR ROM
+       ================================================= */
+
+    try {
+
+      stopAutosave();
+
+      if (
+        pendingFrameId !== null
+      ) {
+
+        nativeCancelAnimationFrame(
+          pendingFrameId
+        );
+
+        pendingFrameId = null;
+      }
+
+
+      /*
+        Recarrega o cartucho no momento de ligar.
+      */
 
       gameboy.loadGame(
         currentRomBuffer
@@ -2018,106 +2390,62 @@ document.getElementById('reset')
 
       setupSramAutoSave();
 
-      await loadSaveState(true);
+      const restored =
+        await loadSaveState(true);
+
+
+      if (!emulatorPoweredOn) {
+        return;
+      }
+
 
       gameboy.run();
 
       startAutosave();
 
-      showStatus(
-        'JOGO REINICIADO'
-      );
+
+      if (restored) {
+
+        showStatus(
+          'RODANDO • SAVE RESTAURADO'
+        );
+
+      } else {
+
+        showStatus(
+          'RODANDO • ' +
+          currentRomName
+            .toUpperCase()
+            .replace(
+              /_/g,
+              ' '
+            )
+        );
+      }
 
     } catch (e) {
 
       console.error(e);
 
-      showError(
-        'ERRO AO REINICIAR'
-      );
-
-    }
-
-  });
-
-
-document.getElementById('power')
-  ?.addEventListener('click', () => {
-
-    if (!gameboy) {
-
-      showStatus(
-        'EMULADOR NÃO INICIALIZADO'
-      );
-
-      return;
-
-    }
-
-    if (emulatorPoweredOn) {
-
       emulatorPoweredOn = false;
 
-      paintPoweredOffScreen();
+      bootAudio.pause();
 
       updatePowerVisual(false);
 
-      if (pendingFrameId !== null) {
+      paintPoweredOffScreen();
 
-        nativeCancelAnimationFrame(
-          pendingFrameId
-        );
-
-        pendingFrameId = null;
-
-      }
-
-      stopAutosave();
-
-      document.getElementById('power')
-        .textContent = '⏻ LIGAR';
-
-      showStatus(
-        'EMULADOR DESLIGADO'
+      showError(
+        'NÃO FOI POSSÍVEL INICIAR'
       );
-
-      return;
-
     }
-
-    emulatorPoweredOn = true;
-
-    updatePowerVisual(true);
-
-    document.getElementById('power')
-      .textContent = '⏻ DESLIGAR';
-
-    if (currentRomBuffer) {
-
-      gameboy.run();
-      startAutosave();
-
-      showStatus(
-        'RODANDO • ' +
-        currentRomName
-          .toUpperCase()
-          .replace(/_/g, ' ')
-      );
-
-    } else {
-
-      showStatus(
-        'SISTEMA PRONTO • CARREGUE UMA ROM'
-      );
-
-    }
-
-  });
+  }
+);
 
 
-/* =========================================================
-   CONTROLES DO GAME BOY
-========================================================= */
+/* =====================================================
+   TECLADO
+   ===================================================== */
 
 const keyMap = {
 
@@ -2135,28 +2463,23 @@ const keyMap = {
   Enter: 'start',
 
   Shift: 'select'
-
 };
 
-
-/* =========================================================
-   TECLADO FÍSICO
-========================================================= */
 
 window.addEventListener(
   'keydown',
   event => {
 
-    if (!keyMap[event.key]) return;
+    if (!keyMap[event.key]) {
+      return;
+    }
 
     event.preventDefault();
 
-    /*
-      O próprio emulador recebe o evento normalmente.
-    */
-
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
@@ -2164,18 +2487,22 @@ window.addEventListener(
   'keyup',
   event => {
 
-    if (!keyMap[event.key]) return;
+    if (!keyMap[event.key]) {
+      return;
+    }
 
     event.preventDefault();
 
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
-/* =========================================================
+/* =====================================================
    CONTROLES TOUCH
-========================================================= */
+   ===================================================== */
 
 const touchInputMap = {
 
@@ -2189,23 +2516,19 @@ const touchInputMap = {
 
   start: 'isPressingStart',
   select: 'isPressingSelect'
-
 };
 
 
-/*
-  Controla diretamente o estado interno
-  do Game Boy.
+function setTouchInput(
+  logical,
+  pressed
+) {
 
-  Isso é diferente do keyboardManager:
+  if (
+    !gameboy ||
+    !gameboy.input
+  ) {
 
-  keyboardManager = teclado físico
-  input           = controles programáticos
-*/
-
-function setTouchInput(logical, pressed) {
-
-  if (!gameboy || !gameboy.input) {
     return;
   }
 
@@ -2216,12 +2539,15 @@ function setTouchInput(logical, pressed) {
     return;
   }
 
-  gameboy.input[property] = pressed;
+  gameboy.input[property] =
+    pressed;
 }
 
 
 document
-  .querySelectorAll('[data-key]')
+  .querySelectorAll(
+    '[data-key]'
+  )
   .forEach(button => {
 
     const logical =
@@ -2232,13 +2558,14 @@ document
 
       event.preventDefault();
 
-      button.classList.add('pressed');
+      button.classList.add(
+        'pressed'
+      );
 
       setTouchInput(
         logical,
         true
       );
-
     }
 
 
@@ -2248,49 +2575,51 @@ document
         event.preventDefault();
       }
 
-      button.classList.remove('pressed');
+      button.classList.remove(
+        'pressed'
+      );
 
       setTouchInput(
         logical,
         false
       );
-
     }
 
 
     button.addEventListener(
       'pointerdown',
       press,
-      { passive: false }
+      {
+        passive: false
+      }
     );
-
 
     button.addEventListener(
       'pointerup',
       release,
-      { passive: false }
+      {
+        passive: false
+      }
     );
-
 
     button.addEventListener(
       'pointercancel',
       release,
-      { passive: false }
+      {
+        passive: false
+      }
     );
-
 
     button.addEventListener(
       'lostpointercapture',
       release,
-      { passive: false }
+      {
+        passive: false
+      }
     );
 
   });
 
-
-/* =========================================================
-   SOLTAR TODOS OS BOTÕES
-========================================================= */
 
 function releaseEverything() {
 
@@ -2311,17 +2640,13 @@ function releaseEverything() {
         logical,
         false
       );
-
     });
 
 
-  /*
-    Segurança extra:
-    garante que nenhum botão fique
-    permanentemente pressionado.
-  */
-
-  if (gameboy && gameboy.input) {
+  if (
+    gameboy &&
+    gameboy.input
+  ) {
 
     gameboy.input.isPressingUp = false;
     gameboy.input.isPressingDown = false;
@@ -2333,9 +2658,7 @@ function releaseEverything() {
 
     gameboy.input.isPressingStart = false;
     gameboy.input.isPressingSelect = false;
-
   }
-
 }
 
 
@@ -2355,46 +2678,59 @@ document.addEventListener(
     ) {
 
       releaseEverything();
-
     }
-
   }
 );
 
 
-
-
-/* =========================================================
-   EDITOR DE CONTROLES
-========================================================= */
+/* =====================================================
+   EDITOR
+   ===================================================== */
 
 const editor =
-  document.getElementById('editor');
+  document.getElementById(
+    'editor'
+  );
 
 const app =
-  document.getElementById('app');
+  document.getElementById(
+    'app'
+  );
 
 const btnEdit =
-  document.getElementById('btnEdit');
+  document.getElementById(
+    'btnEdit'
+  );
 
 const doneEdit =
-  document.getElementById('doneEdit');
+  document.getElementById(
+    'doneEdit'
+  );
 
 const resetControls =
-  document.getElementById('resetControls');
+  document.getElementById(
+    'resetControls'
+  );
 
 const menuDrawer =
-  document.getElementById('menuDrawer');
+  document.getElementById(
+    'menuDrawer'
+  );
 
 const menuToggle =
-  document.getElementById('menuToggle');
+  document.getElementById(
+    'menuToggle'
+  );
+
 
 menuToggle.addEventListener(
   'click',
   () => {
 
     const isOpen =
-      menuDrawer.classList.toggle('open');
+      menuDrawer.classList.toggle(
+        'open'
+      );
 
     menuToggle.setAttribute(
       'aria-expanded',
@@ -2403,105 +2739,164 @@ menuToggle.addEventListener(
 
     menuToggle.setAttribute(
       'aria-label',
-      isOpen ? 'Fechar menu' : 'Abrir menu'
+      isOpen
+        ? 'Fechar menu'
+        : 'Abrir menu'
     );
-
   }
 );
 
 
 const dpadRange =
-  document.getElementById('dpadRange');
+  document.getElementById(
+    'dpadRange'
+  );
 
 const bRange =
-  document.getElementById('bRange');
+  document.getElementById(
+    'bRange'
+  );
 
 const aRange =
-  document.getElementById('aRange');
+  document.getElementById(
+    'aRange'
+  );
 
 const smallRange =
-  document.getElementById('smallRange');
+  document.getElementById(
+    'smallRange'
+  );
+
 
 const dpadScaleRange =
-  document.getElementById('dpadScaleRange');
+  document.getElementById(
+    'dpadScaleRange'
+  );
 
 const bScaleRange =
-  document.getElementById('bScaleRange');
+  document.getElementById(
+    'bScaleRange'
+  );
 
 const aScaleRange =
-  document.getElementById('aScaleRange');
+  document.getElementById(
+    'aScaleRange'
+  );
 
 const smallScaleRange =
-  document.getElementById('smallScaleRange');
+  document.getElementById(
+    'smallScaleRange'
+  );
 
 
 const dpadValue =
-  document.getElementById('dpadValue');
+  document.getElementById(
+    'dpadValue'
+  );
 
 const bValue =
-  document.getElementById('bValue');
+  document.getElementById(
+    'bValue'
+  );
 
 const aValue =
-  document.getElementById('aValue');
+  document.getElementById(
+    'aValue'
+  );
 
 const smallValue =
-  document.getElementById('smallValue');
+  document.getElementById(
+    'smallValue'
+  );
+
 
 const dpadScaleValue =
-  document.getElementById('dpadScaleValue');
+  document.getElementById(
+    'dpadScaleValue'
+  );
 
 const bScaleValue =
-  document.getElementById('bScaleValue');
+  document.getElementById(
+    'bScaleValue'
+  );
 
 const aScaleValue =
-  document.getElementById('aScaleValue');
+  document.getElementById(
+    'aScaleValue'
+  );
 
 const smallScaleValue =
-  document.getElementById('smallScaleValue');
+  document.getElementById(
+    'smallScaleValue'
+  );
 
 
 const grpDpad =
-  document.getElementById('grpDpad');
+  document.getElementById(
+    'grpDpad'
+  );
 
 const grpB =
-  document.getElementById('grpB');
+  document.getElementById(
+    'grpB'
+  );
 
 const grpA =
-  document.getElementById('grpA');
+  document.getElementById(
+    'grpA'
+  );
 
 const grpSmall =
-  document.getElementById('grpSmall');
+  document.getElementById(
+    'grpSmall'
+  );
 
 const grpSelect =
-  document.getElementById('grpSelect');
+  document.getElementById(
+    'grpSelect'
+  );
 
 const grpStart =
-  document.getElementById('grpStart');
+  document.getElementById(
+    'grpStart'
+  );
 
+
+/* =====================================================
+   LAYOUT PADRÃO
+   ===================================================== */
 
 const defaultLayout = {
 
   dpad: 0,
   dpadY: 0,
   dpadScale: 1,
+
   b: 0,
   bY: 0,
   bScale: 1,
+
   a: 0,
   aY: 0,
   aScale: 1,
+
   small: 0,
   smallY: 0,
   smallScale: 1,
+
   selectX: 0,
   selectY: 0,
   selectScale: 1,
+
   startX: 0,
   startY: 0,
   startScale: 1
-
 };
 
+
+/* =====================================================
+   APLICAR LAYOUT
+   ===================================================== */
 
 function applyLayout(layout) {
 
@@ -2514,6 +2909,7 @@ function applyLayout(layout) {
   const dScale =
     Number(layout.dpadScale) || 1;
 
+
   const b =
     Number(layout.b) || 0;
 
@@ -2522,6 +2918,7 @@ function applyLayout(layout) {
 
   const bScale =
     Number(layout.bScale) || 1;
+
 
   const a =
     Number(layout.a) || 0;
@@ -2532,6 +2929,7 @@ function applyLayout(layout) {
   const aScale =
     Number(layout.aScale) || 1;
 
+
   const s =
     Number(layout.small) || 0;
 
@@ -2541,6 +2939,7 @@ function applyLayout(layout) {
   const sScale =
     Number(layout.smallScale) || 1;
 
+
   const selectX =
     Number(layout.selectX) || 0;
 
@@ -2549,6 +2948,7 @@ function applyLayout(layout) {
 
   const selectScale =
     Number(layout.selectScale) || 1;
+
 
   const startX =
     Number(layout.startX) || 0;
@@ -2563,20 +2963,25 @@ function applyLayout(layout) {
   grpDpad.style.transform =
     `translate(${d}px, ${dY}px) scale(${dScale})`;
 
+
   grpB.style.transform =
     `translate(${b}px, ${bY}px) rotate(-2deg) scale(${bScale})`;
+
 
   grpA.style.transform =
     `translate(${a}px, ${aY}px) scale(${aScale})`;
 
+
   grpSmall.style.transform =
     `translate(${s}px, ${sY}px) scale(${sScale})`;
 
+
   grpSelect.style.transform =
-    `translate(${selectX}px, ${selectY}px) rotate(-26deg)  scale(${selectScale})`;
+    `translate(${selectX}px, ${selectY}px) rotate(-26deg) scale(${selectScale})`;
+
 
   grpStart.style.transform =
-    `translate(${startX}px, ${startY}px) rotate(-26deg)  scale(${startScale})`;
+    `translate(${startX}px, ${startY}px) rotate(-26deg) scale(${startScale})`;
 
 
   dpadRange.value = d;
@@ -2590,37 +2995,75 @@ function applyLayout(layout) {
   aValue.textContent = a;
   smallValue.textContent = s;
 
-  dpadScaleRange.value = Math.round(dScale * 100);
-  bScaleRange.value = Math.round(bScale * 100);
-  aScaleRange.value = Math.round(aScale * 100);
-  smallScaleRange.value = Math.round(sScale * 100);
 
-  dpadScaleValue.textContent = `${Math.round(dScale * 100)}%`;
-  bScaleValue.textContent = `${Math.round(bScale * 100)}%`;
-  aScaleValue.textContent = `${Math.round(aScale * 100)}%`;
-  smallScaleValue.textContent = `${Math.round(sScale * 100)}%`;
+  dpadScaleRange.value =
+    Math.round(
+      dScale * 100
+    );
+
+  bScaleRange.value =
+    Math.round(
+      bScale * 100
+    );
+
+  aScaleRange.value =
+    Math.round(
+      aScale * 100
+    );
+
+  smallScaleRange.value =
+    Math.round(
+      sScale * 100
+    );
+
+
+  dpadScaleValue.textContent =
+    `${Math.round(dScale * 100)}%`;
+
+  bScaleValue.textContent =
+    `${Math.round(bScale * 100)}%`;
+
+  aScaleValue.textContent =
+    `${Math.round(aScale * 100)}%`;
+
+  smallScaleValue.textContent =
+    `${Math.round(sScale * 100)}%`;
+
 
   grpDpad.dataset.y = dY;
   grpDpad.dataset.scale = dScale;
   grpDpad.dataset.x = d;
+
+
   grpB.dataset.y = bY;
   grpB.dataset.scale = bScale;
   grpB.dataset.x = b;
+
+
   grpA.dataset.y = aY;
   grpA.dataset.scale = aScale;
   grpA.dataset.x = a;
+
+
   grpSmall.dataset.y = sY;
   grpSmall.dataset.scale = sScale;
   grpSmall.dataset.x = s;
+
+
   grpSelect.dataset.x = selectX;
   grpSelect.dataset.y = selectY;
   grpSelect.dataset.scale = selectScale;
+
+
   grpStart.dataset.x = startX;
   grpStart.dataset.y = startY;
   grpStart.dataset.scale = startScale;
-
 }
 
+
+/* =====================================================
+   PEGAR LAYOUT
+   ===================================================== */
 
 function getLayout() {
 
@@ -2633,7 +3076,10 @@ function getLayout() {
       Number(grpDpad.dataset.y) || 0,
 
     dpadScale:
-      Number(dpadScaleRange.value) / 100 || 1,
+      Number(
+        dpadScaleRange.value
+      ) / 100 || 1,
+
 
     b:
       Number(bRange.value),
@@ -2642,7 +3088,10 @@ function getLayout() {
       Number(grpB.dataset.y) || 0,
 
     bScale:
-      Number(bScaleRange.value) / 100 || 1,
+      Number(
+        bScaleRange.value
+      ) / 100 || 1,
+
 
     a:
       Number(aRange.value),
@@ -2651,7 +3100,10 @@ function getLayout() {
       Number(grpA.dataset.y) || 0,
 
     aScale:
-      Number(aScaleRange.value) / 100 || 1,
+      Number(
+        aScaleRange.value
+      ) / 100 || 1,
+
 
     small:
       Number(smallRange.value),
@@ -2660,7 +3112,10 @@ function getLayout() {
       Number(grpSmall.dataset.y) || 0,
 
     smallScale:
-      Number(smallScaleRange.value) / 100 || 1,
+      Number(
+        smallScaleRange.value
+      ) / 100 || 1,
+
 
     selectX:
       Number(grpSelect.dataset.x) || 0,
@@ -2669,7 +3124,10 @@ function getLayout() {
       Number(grpSelect.dataset.y) || 0,
 
     selectScale:
-      Number(grpSelect.dataset.scale) || 1,
+      Number(
+        grpSelect.dataset.scale
+      ) || 1,
+
 
     startX:
       Number(grpStart.dataset.x) || 0,
@@ -2678,12 +3136,16 @@ function getLayout() {
       Number(grpStart.dataset.y) || 0,
 
     startScale:
-      Number(grpStart.dataset.scale) || 1
-
+      Number(
+        grpStart.dataset.scale
+      ) || 1
   };
-
 }
 
+
+/* =====================================================
+   SALVAR LAYOUT
+   ===================================================== */
 
 function saveLayout() {
 
@@ -2693,9 +3155,12 @@ function saveLayout() {
       getLayout()
     )
   );
-
 }
 
+
+/* =====================================================
+   CARREGAR LAYOUT
+   ===================================================== */
 
 function loadLayout() {
 
@@ -2713,7 +3178,6 @@ function loadLayout() {
       );
 
       return;
-
     }
 
   } catch {}
@@ -2721,16 +3185,18 @@ function loadLayout() {
   applyLayout(
     defaultLayout
   );
-
 }
 
+
+/* =====================================================
+   EDITOR UPDATE
+   ===================================================== */
 
 function updateEditor() {
 
   applyLayout(
     getLayout()
   );
-
 }
 
 
@@ -2739,221 +3205,301 @@ function updateEditor() {
   bRange,
   aRange,
   smallRange,
+
   dpadScaleRange,
   bScaleRange,
   aScaleRange,
   smallScaleRange
+
 ].forEach(range => {
 
   range.addEventListener(
     'input',
     updateEditor
   );
-
 });
 
+
+/* =====================================================
+   CONTROLES ARRASTÁVEIS
+   ===================================================== */
 
 const draggableControls = [
 
   {
     element: grpDpad,
-    range: dpadRange,
-    yKey: 'y',
-    scaleKey: 'scale'
+    range: dpadRange
   },
 
   {
     element: grpB,
-    range: bRange,
-    yKey: 'y',
-    scaleKey: 'scale'
+    range: bRange
   },
 
   {
     element: grpA,
-    range: aRange,
-    yKey: 'y',
-    scaleKey: 'scale'
+    range: aRange
   },
 
   {
     element: grpSelect,
-    range: null,
-    yKey: 'y',
-    scaleKey: 'scale'
+    range: null
   },
 
   {
     element: grpStart,
-    range: null,
-    yKey: 'y',
-    scaleKey: 'scale'
+    range: null
   }
 
 ];
 
 
-function clamp(value, minimum, maximum) {
+function clamp(
+  value,
+  minimum,
+  maximum
+) {
 
   return Math.min(
-    Math.max(value, minimum),
+    Math.max(
+      value,
+      minimum
+    ),
     maximum
   );
-
 }
 
 
-draggableControls.forEach(control => {
+draggableControls.forEach(
+  control => {
 
-  let dragStart = null;
+    let dragStart = null;
 
-  control.element.addEventListener(
-    'pointerdown',
-    event => {
 
-      if (!app.classList.contains('editing')) return;
+    control.element.addEventListener(
+      'pointerdown',
+      event => {
 
-      event.preventDefault();
-      event.stopPropagation();
+        if (
+          !app.classList.contains(
+            'editing'
+          )
+        ) {
 
-      dragStart = {
-        x: event.clientX,
-        y: event.clientY,
-        offsetX: control.range
-          ? Number(control.range.value) || 0
-          : Number(control.element.dataset.x) || 0,
-        offsetY: Number(control.element.dataset.y) || 0,
-        dragging: false
-      };
-
-      control.element.setPointerCapture(
-        event.pointerId
-      );
-
-    }
-  );
-
-  control.element.addEventListener(
-    'pointermove',
-    event => {
-
-      if (!dragStart) return;
-
-      const deltaX =
-        event.clientX - dragStart.x;
-
-      const deltaY =
-        event.clientY - dragStart.y;
-
-      if (
-        !dragStart.dragging &&
-        Math.hypot(deltaX, deltaY) < 5
-      ) {
-
-        return;
-
-      }
-
-      if (!dragStart.dragging) {
-
-        dragStart.dragging = true;
+          return;
+        }
 
         event.preventDefault();
+        event.stopPropagation();
 
-        control.element.classList.remove(
-          'pressed'
+
+        dragStart = {
+
+          x: event.clientX,
+
+          y: event.clientY,
+
+          offsetX:
+            control.range
+              ? Number(
+                  control.range.value
+                ) || 0
+              : Number(
+                  control.element.dataset.x
+                ) || 0,
+
+          offsetY:
+            Number(
+              control.element.dataset.y
+            ) || 0,
+
+          dragging: false
+        };
+
+
+        control.element.setPointerCapture(
+          event.pointerId
         );
-
-        setTouchInput(
-          control.element.dataset.key,
-          false
-        );
-
       }
+    );
 
-      const nextX = clamp(
-        dragStart.offsetX + deltaX,
-        -100,
-        100
-      );
 
-      if (control.range) {
+    control.element.addEventListener(
+      'pointermove',
+      event => {
 
-        control.range.value = clamp(
-          nextX,
-          Number(control.range.min),
-          Number(control.range.max)
-        );
+        if (!dragStart) {
+          return;
+        }
 
-      } else {
 
-        control.element.dataset.x = nextX;
+        const deltaX =
+          event.clientX -
+          dragStart.x;
 
+
+        const deltaY =
+          event.clientY -
+          dragStart.y;
+
+
+        if (
+          !dragStart.dragging &&
+          Math.hypot(
+            deltaX,
+            deltaY
+          ) < 5
+        ) {
+
+          return;
+        }
+
+
+        if (!dragStart.dragging) {
+
+          dragStart.dragging = true;
+
+          event.preventDefault();
+
+          control.element.classList.remove(
+            'pressed'
+          );
+
+          setTouchInput(
+            control.element.dataset.key,
+            false
+          );
+        }
+
+
+        const nextX =
+          clamp(
+            dragStart.offsetX +
+              deltaX,
+            -100,
+            100
+          );
+
+
+        if (control.range) {
+
+          control.range.value =
+            clamp(
+              nextX,
+              Number(
+                control.range.min
+              ),
+              Number(
+                control.range.max
+              )
+            );
+
+        } else {
+
+          control.element.dataset.x =
+            nextX;
+        }
+
+
+        control.element.dataset.y =
+          clamp(
+            dragStart.offsetY +
+              deltaY,
+            -100,
+            100
+          );
+
+
+        updateEditor();
       }
+    );
 
-      control.element.dataset.y = clamp(
-        dragStart.offsetY + event.clientY - dragStart.y,
-        -100,
-        100
-      );
 
-      updateEditor();
+    control.element.addEventListener(
+      'pointerup',
+      () => {
 
-    }
-  );
+        if (
+          dragStart?.dragging
+        ) {
 
-  control.element.addEventListener(
-    'pointerup',
-    () => {
+          saveLayout();
+        }
 
-      if (dragStart?.dragging) {
-        saveLayout();
+        dragStart = null;
       }
+    );
 
-      dragStart = null;
-    }
-  );
 
-  control.element.addEventListener(
-    'pointercancel',
-    () => {
-      dragStart = null;
-    }
-  );
+    control.element.addEventListener(
+      'pointercancel',
+      () => {
 
-  control.element.addEventListener(
-    'wheel',
-    event => {
+        dragStart = null;
+      }
+    );
 
-      if (!app.classList.contains('editing')) return;
 
-      event.preventDefault();
-      event.stopPropagation();
+    control.element.addEventListener(
+      'wheel',
+      event => {
 
-      const currentScale =
-        Number(control.element.dataset.scale) || 1;
+        if (
+          !app.classList.contains(
+            'editing'
+          )
+        ) {
 
-      control.element.dataset.scale = clamp(
-        currentScale + (event.deltaY < 0 ? .05 : -.05),
-        .6,
-        1.5
-      ).toFixed(2);
+          return;
+        }
 
-      updateEditor();
+        event.preventDefault();
+        event.stopPropagation();
 
-    },
-    { passive: false }
-  );
 
-});
+        const currentScale =
+          Number(
+            control.element.dataset.scale
+          ) || 1;
 
+
+        control.element.dataset.scale =
+          clamp(
+            currentScale +
+              (
+                event.deltaY < 0
+                  ? 0.05
+                  : -0.05
+              ),
+            0.6,
+            1.5
+          ).toFixed(2);
+
+
+        updateEditor();
+
+      },
+      {
+        passive: false
+      }
+    );
+  }
+);
+
+
+/* =====================================================
+   BOTÃO EDITAR
+   ===================================================== */
 
 btnEdit.addEventListener(
   'click',
   () => {
 
     const editing =
-      !app.classList.contains('editing');
+      !app.classList.contains(
+        'editing'
+      );
+
 
     app.classList.toggle(
       'editing',
@@ -2965,12 +3511,14 @@ btnEdit.addEventListener(
       editing
     );
 
+
     btnEdit.setAttribute(
       'aria-label',
       editing
         ? 'Desativar ajustes'
         : 'Ativar ajustes'
     );
+
 
     btnEdit.setAttribute(
       'title',
@@ -2979,15 +3527,19 @@ btnEdit.addEventListener(
         : 'Ativar ajustes'
     );
 
+
     showStatus(
       editing
         ? 'AJUSTES ATIVADOS'
         : 'AJUSTES DESATIVADOS'
     );
-
   }
 );
 
+
+/* =====================================================
+   CONCLUÍDO
+   ===================================================== */
 
 doneEdit.addEventListener(
   'click',
@@ -3003,6 +3555,7 @@ doneEdit.addEventListener(
       'open'
     );
 
+
     btnEdit.setAttribute(
       'aria-label',
       'Ativar ajustes'
@@ -3013,13 +3566,17 @@ doneEdit.addEventListener(
       'Ativar ajustes'
     );
 
+
     showStatus(
       'CONTROLES AJUSTADOS'
     );
-
   }
 );
 
+
+/* =====================================================
+   RESET CONTROLES
+   ===================================================== */
 
 resetControls.addEventListener(
   'click',
@@ -3030,24 +3587,17 @@ resetControls.addEventListener(
     );
 
     saveLayout();
-
   }
 );
 
 
-/* =========================================================
-   FECHAMENTO DA PÁGINA
-========================================================= */
+/* =====================================================
+   PAGEHIDE
+   ===================================================== */
 
 window.addEventListener(
   'pagehide',
   () => {
-
-    /*
-      O IndexedDB já é o armazenamento principal.
-      Aqui fazemos apenas uma tentativa final
-      de guardar o SRAM atual.
-    */
 
     if (
       gameboy &&
@@ -3060,6 +3610,7 @@ window.addEventListener(
         const saveData =
           gameboy.getCartridgeSaveRam();
 
+
         if (
           saveData &&
           saveData.byteLength
@@ -3070,24 +3621,23 @@ window.addEventListener(
               saveData
             );
 
+
           localStorage.setItem(
-            'gb_save_' + currentRomName,
+            'gb_save_' +
+            currentRomName,
             base64
           );
-
         }
 
       } catch {}
-
     }
-
   }
 );
 
 
-/* =========================================================
+/* =====================================================
    INICIALIZAÇÃO
-========================================================= */
+   ===================================================== */
 
 async function init() {
 
@@ -3098,22 +3648,18 @@ async function init() {
     );
 
 
-    /*
-      Biblioteca que já estávamos usando
-      e que funcionou com nosso projeto.
-    */
-
-    const {
-      Gameboy
-    } = await import(
-      'https://esm.sh/gameboy-emulator@1.1.2'
-    );
+    const { Gameboy } =
+      await import(
+        'https://esm.sh/gameboy-emulator@1.1.2'
+      );
 
 
     /*
-      A biblioteca usa AudioWorklet + SharedArrayBuffer.
-      Esses recursos não funcionam ao abrir o HTML diretamente
-      pelo protocolo file://, então inicializamos sem áudio nesse caso.
+      O emulador original precisa de um
+      AudioContext em determinados ambientes.
+
+      Isso NÃO interfere no nosso MP3,
+      que usa HTMLAudioElement.
     */
 
     if (
@@ -3125,35 +3671,44 @@ async function init() {
 
         constructor() {
 
-          this.sampleRate = 44100;
+          this.sampleRate =
+            44100;
 
           this.destination = {};
 
           this.audioWorklet = {
+
             addModule() {
-              return new Promise(() => {});
+
+              return new Promise(
+                () => {}
+              );
             }
           };
-
         }
 
         suspend() {
+
           return Promise.resolve();
         }
 
         resume() {
+
           return Promise.resolve();
         }
-
       }
 
-      window.AudioContext = SilentAudioContext;
-      window.webkitAudioContext = SilentAudioContext;
+
+      window.AudioContext =
+        SilentAudioContext;
+
+      window.webkitAudioContext =
+        SilentAudioContext;
+
 
       showStatus(
-        'SISTEMA PRONTO • ÁUDIO DESATIVADO'
+        'SISTEMA DESLIGADO • ÁUDIO DESATIVADO'
       );
-
     }
 
 
@@ -3161,94 +3716,130 @@ async function init() {
       new Gameboy();
 
 
-    /*
-      Cada frame produzido pelo emulador
-      é desenhado diretamente no Canvas.
-    */
+    /* =================================================
+       PALETA GAME BOY
+       ================================================= */
 
-   /* =========================================================
-   PALETA GAME BOY DMG-01
-========================================================= */
+    function applyDMGPalette(
+      imageData
+    ) {
 
-function applyDMGPalette(imageData) {
+      const data =
+        imageData.data;
 
-  const data = imageData.data;
 
-  /*
-    Paleta clássica inspirada no LCD
-    do Game Boy original DMG-01.
-  */
+      const palette = [
 
-  const palette = [
-    [15, 56, 15],      // mais escuro
-    [48, 98, 48],      // escuro
-    [139, 172, 15],    // claro
-    [155, 188, 15]     // mais claro
-  ];
+        [15, 56, 15],
 
-  for (let i = 0; i < data.length; i += 4) {
+        [48, 98, 48],
 
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
+        [139, 172, 15],
 
-    /*
-      Como o Game Boy é monocromático,
-      transformamos o pixel em luminosidade.
-    */
+        [155, 188, 15]
 
-    const brightness =
-      0.299 * r +
-      0.587 * g +
-      0.114 * b;
+      ];
 
-    let shade;
 
-    if (brightness < 64) {
+      for (
+        let i = 0;
+        i < data.length;
+        i += 4
+      ) {
 
-      shade = palette[0];
+        const r =
+          data[i];
 
-    } else if (brightness < 128) {
+        const g =
+          data[i + 1];
 
-      shade = palette[1];
+        const b =
+          data[i + 2];
 
-    } else if (brightness < 192) {
 
-      shade = palette[2];
+        const brightness =
+          0.299 * r +
+          0.587 * g +
+          0.114 * b;
 
-    } else {
 
-      shade = palette[3];
+        let shade;
 
+
+        if (
+          brightness < 64
+        ) {
+
+          shade =
+            palette[0];
+
+        } else if (
+          brightness < 128
+        ) {
+
+          shade =
+            palette[1];
+
+        } else if (
+          brightness < 192
+        ) {
+
+          shade =
+            palette[2];
+
+        } else {
+
+          shade =
+            palette[3];
+        }
+
+
+        data[i] =
+          shade[0];
+
+        data[i + 1] =
+          shade[1];
+
+        data[i + 2] =
+          shade[2];
+      }
     }
 
-    data[i]     = shade[0];
-    data[i + 1] = shade[1];
-    data[i + 2] = shade[2];
 
-  }
+    /* =================================================
+       FRAME
+       ================================================= */
 
-}
+    gameboy.onFrameFinished(
+      imageData => {
 
+        /*
+          Se estiver desligado,
+          não pintamos frames atrasados.
+        */
 
-
-   gameboy.onFrameFinished(
-        imageData => {
-
-      applyDMGPalette(imageData);
-
-       ctx.putImageData(
-        imageData,
-        0,
-        0
-      );
-  }
-);
+        if (!emulatorPoweredOn) {
+          return;
+        }
 
 
-    /*
-      Teclado físico.
-    */
+        applyDMGPalette(
+          imageData
+        );
+
+
+        ctx.putImageData(
+          imageData,
+          0,
+          0
+        );
+      }
+    );
+
+
+    /* =================================================
+       TECLADO DO EMULADOR
+       ================================================= */
 
     gameboy.keyboardManager.left =
       'ArrowLeft';
@@ -3275,19 +3866,22 @@ function applyDMGPalette(imageData) {
       'ShiftLeft';
 
 
-    /* Layout */
+    /* =================================================
+       LAYOUT
+       ================================================= */
 
     loadLayout();
 
 
-    /*
-      Tenta recuperar a última ROM.
-    */
+    /* =================================================
+       RECUPERAR ROM ANTERIOR
+       ================================================= */
 
     const autoRom =
       await getFromDB(
         'active_rom_buffer'
       );
+
 
     const autoName =
       await getFromDB(
@@ -3307,78 +3901,48 @@ function applyDMGPalette(imageData) {
         autoName;
 
 
-      try {
-
-        gameboy.loadGame(
-          autoRom
-        );
-
-        /*
-          MUITO IMPORTANTE:
-          depois do loadGame o cartridge
-          passa a existir.
-        */
-
-        setupSramAutoSave();
-
-
-        const restored =
-          await loadSaveState(true);
-
-
-        unlockAudio();
-
-        gameboy.run();
-
-        startAutosave();
-
-
-        if (restored) {
-
-          showStatus(
-            'RODANDO • SAVE RESTAURADO'
-          );
-
-        } else {
-
-          showStatus(
-            'RODANDO • ' +
-            autoName
-              .toUpperCase()
-              .replace(/_/g, ' ')
-          );
-
-        }
-
-      } catch (e) {
-
-        console.error(e);
-
-        showError(
-          'ERRO AO RESTAURAR ROM'
-        );
-
-      }
+      showStatus(
+        'SISTEMA DESLIGADO • ROM PRONTA'
+      );
 
     } else {
 
       showStatus(
-        'SISTEMA PRONTO • CARREGUE UMA ROM'
+        'SISTEMA DESLIGADO • CARREGUE UMA ROM'
       );
-
     }
+
+
+    emulatorPoweredOn = false;
+
+    updatePowerVisual(
+      false
+    );
+
+    paintPoweredOffScreen();
 
   } catch (e) {
 
     console.error(e);
 
+    emulatorPoweredOn = false;
+
+    updatePowerVisual(
+      false
+    );
+
+    paintPoweredOffScreen();
+
     showError(
       'NÃO FOI POSSÍVEL CARREGAR O EMULADOR'
     );
-
   }
-
 }
+
+
+/* =====================================================
+   PREPARAR SPRITES — VERSÃO ROBUSTA
+   ===================================================== */
 
 async function prepareSprites() {
 
@@ -3387,118 +3951,374 @@ async function prepareSprites() {
       '.dpadSprite, .buttonSprite'
     );
 
+
   await Promise.all(
-    [...sprites].map(async image => {
 
-      if (!image.complete) {
+    [...sprites].map(
+      async image => {
 
-        await new Promise(resolve => {
+        /*
+          IMPORTANTE:
 
-          image.addEventListener(
-            'load',
-            resolve,
-            { once: true }
+          Nunca deixamos uma imagem quebrada
+          travar a inicialização inteira.
+
+          No GitHub Pages, se algum asset falhar,
+          o emulador continua iniciando normalmente.
+        */
+
+        if (!image.complete) {
+
+          await new Promise(
+            resolve => {
+
+              let finished = false;
+
+
+              const finish = () => {
+
+                if (finished) {
+                  return;
+                }
+
+                finished = true;
+
+                image.removeEventListener(
+                  'load',
+                  finish
+                );
+
+                image.removeEventListener(
+                  'error',
+                  finish
+                );
+
+                resolve();
+              };
+
+
+              image.addEventListener(
+                'load',
+                finish,
+                {
+                  once: true
+                }
+              );
+
+
+              image.addEventListener(
+                'error',
+                () => {
+
+                  console.warn(
+                    'Sprite não pôde ser carregado:',
+                    image.src
+                  );
+
+                  finish();
+
+                },
+                {
+                  once: true
+                }
+              );
+
+
+              /*
+                Segurança extra.
+
+                Se o navegador não disparar
+                nenhum evento por algum motivo,
+                não deixamos o emulador travado.
+              */
+
+              setTimeout(
+                () => {
+
+                  if (!finished) {
+
+                    console.warn(
+                      'Timeout ao carregar sprite:',
+                      image.src
+                    );
+
+                    finish();
+                  }
+
+                },
+                5000
+              );
+
+            }
+          );
+        }
+
+
+        /*
+          Se a imagem não existe ou falhou,
+          simplesmente seguimos.
+
+          O mais importante é o emulador
+          continuar inicializando.
+        */
+
+        if (!image.naturalWidth) {
+
+          console.warn(
+            'Sprite indisponível:',
+            image.src
           );
 
-        });
+          return;
+        }
 
-      }
 
-      if (!image.naturalWidth) return;
+        try {
 
-      const sourceCanvas =
-        document.createElement('canvas');
+          const sourceCanvas =
+            document.createElement(
+              'canvas'
+            );
 
-      sourceCanvas.width = image.naturalWidth;
-      sourceCanvas.height = image.naturalHeight;
 
-      const sourceContext =
-        sourceCanvas.getContext('2d');
+          sourceCanvas.width =
+            image.naturalWidth;
 
-      sourceContext.drawImage(image, 0, 0);
+          sourceCanvas.height =
+            image.naturalHeight;
 
-      const sourceImage =
-        sourceContext.getImageData(
-          0,
-          0,
-          sourceCanvas.width,
-          sourceCanvas.height
-        );
 
-      let minX = sourceCanvas.width;
-      let minY = sourceCanvas.height;
-      let maxX = -1;
-      let maxY = -1;
+          const sourceContext =
+            sourceCanvas.getContext(
+              '2d'
+            );
 
-      for (let y = 0; y < sourceCanvas.height; y += 1) {
 
-        for (let x = 0; x < sourceCanvas.width; x += 1) {
-
-          const index =
-            (y * sourceCanvas.width + x) * 4;
-
-          const red = sourceImage.data[index];
-          const green = sourceImage.data[index + 1];
-          const blue = sourceImage.data[index + 2];
-
-          if (
-            red > 232 &&
-            green > 232 &&
-            blue > 232
-          ) {
-
-            sourceImage.data[index + 3] = 0;
-            continue;
-
+          if (!sourceContext) {
+            return;
           }
 
-          minX = Math.min(minX, x);
-          minY = Math.min(minY, y);
-          maxX = Math.max(maxX, x);
-          maxY = Math.max(maxY, y);
 
+          sourceContext.drawImage(
+            image,
+            0,
+            0
+          );
+
+
+          const sourceImage =
+            sourceContext.getImageData(
+              0,
+              0,
+              sourceCanvas.width,
+              sourceCanvas.height
+            );
+
+
+          let minX =
+            sourceCanvas.width;
+
+          let minY =
+            sourceCanvas.height;
+
+          let maxX = -1;
+
+          let maxY = -1;
+
+
+          for (
+            let y = 0;
+            y < sourceCanvas.height;
+            y += 1
+          ) {
+
+            for (
+              let x = 0;
+              x < sourceCanvas.width;
+              x += 1
+            ) {
+
+              const index =
+                (
+                  y *
+                  sourceCanvas.width +
+                  x
+                ) * 4;
+
+
+              const red =
+                sourceImage.data[index];
+
+              const green =
+                sourceImage.data[
+                  index + 1
+                ];
+
+              const blue =
+                sourceImage.data[
+                  index + 2
+                ];
+
+
+              /*
+                Remove o branco do fundo.
+              */
+
+              if (
+                red > 232 &&
+                green > 232 &&
+                blue > 232
+              ) {
+
+                sourceImage.data[
+                  index + 3
+                ] = 0;
+
+                continue;
+              }
+
+
+              minX =
+                Math.min(
+                  minX,
+                  x
+                );
+
+              minY =
+                Math.min(
+                  minY,
+                  y
+                );
+
+              maxX =
+                Math.max(
+                  maxX,
+                  x
+                );
+
+              maxY =
+                Math.max(
+                  maxY,
+                  y
+                );
+            }
+          }
+
+
+          /*
+            Imagem totalmente transparente/branca.
+          */
+
+          if (maxX < 0) {
+            return;
+          }
+
+
+          sourceContext.putImageData(
+            sourceImage,
+            0,
+            0
+          );
+
+
+          const croppedCanvas =
+            document.createElement(
+              'canvas'
+            );
+
+
+          croppedCanvas.width =
+            maxX - minX + 1;
+
+          croppedCanvas.height =
+            maxY - minY + 1;
+
+
+          const croppedContext =
+            croppedCanvas.getContext(
+              '2d'
+            );
+
+
+          if (!croppedContext) {
+            return;
+          }
+
+
+          croppedContext.drawImage(
+
+            sourceCanvas,
+
+            minX,
+            minY,
+
+            croppedCanvas.width,
+            croppedCanvas.height,
+
+            0,
+            0,
+
+            croppedCanvas.width,
+            croppedCanvas.height
+          );
+
+
+          /*
+            Substitui pelo sprite já recortado.
+          */
+
+          image.src =
+            croppedCanvas.toDataURL(
+              'image/png'
+            );
+
+
+          /*
+            Aguarda o novo Data URL,
+            mas nunca deixa isso bloquear
+            a inicialização.
+          */
+
+          if (image.decode) {
+
+            await image
+              .decode()
+              .catch(
+                () => {}
+              );
+          }
+
+        } catch (error) {
+
+          /*
+            Se o processamento do sprite
+            falhar, o emulador continua.
+          */
+
+          console.warn(
+            'Não foi possível processar sprite:',
+            image.src,
+            error
+          );
         }
 
       }
-
-      if (maxX < 0) return;
-
-      sourceContext.putImageData(sourceImage, 0, 0);
-
-      const croppedCanvas =
-        document.createElement('canvas');
-
-      croppedCanvas.width = maxX - minX + 1;
-      croppedCanvas.height = maxY - minY + 1;
-
-      croppedCanvas
-        .getContext('2d')
-        .drawImage(
-          sourceCanvas,
-          minX,
-          minY,
-          croppedCanvas.width,
-          croppedCanvas.height,
-          0,
-          0,
-          croppedCanvas.width,
-          croppedCanvas.height
-        );
-
-      image.src =
-        croppedCanvas.toDataURL('image/png');
-
-      if (image.decode) {
-
-        await image.decode().catch(() => {});
-
-      }
-
-    })
+    )
   );
-
 }
 
+/* =====================================================
+   ESTADO INICIAL
+   ===================================================== */
+
+updatePowerVisual(false);
+
+paintPoweredOffScreen();
+
+
+/* =====================================================
+   INICIAR
+   ===================================================== */
 
 prepareSprites()
   .then(init);

@@ -27,7 +27,7 @@ html, body {
   width: min(420px, 92vw);
   height: min(850px, 88vh);
   background-color: #c3c5bf;
-  background-image: url('./assets/corpo%20gameboy.png.png');
+  background-image: url('./assets/corpo-gameboy.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
@@ -660,7 +660,7 @@ button {
 
   <img
     class="consoleTopImage"
-    src="./assets/parte%20superior%20da%20tela.png.png"
+    src="./assets/parte-superior-console.png"
     alt="Parte superior da tela">
 
   <button
@@ -668,14 +668,14 @@ button {
     class="is-off"
     type="button"
     aria-pressed="false">
-    ⏻ OFF
+     OFF
   </button>
 
   <div id="screenWrap">
 
     <img
       class="topImage"
-      src="./assets/logo%20dot%20matrix.png.png"
+      src="./assets/logo-dot-matrix.png"
       alt="Dot Matrix">
 
     <div class="screenHeader">
@@ -709,7 +709,7 @@ button {
 
     <img
       class="consoleLogo"
-      src="./assets/logo nintendo.png"
+      src="./assets/logo-nintendo.png"
       alt="Nintendo">
 
   </div>
@@ -724,9 +724,9 @@ button {
 
         <img
           class="dpadSprite"
-          src="./assets/dpad.png.png"
+          src="./assets/dpad.png"
           alt="">
-
+           
         <div
           class="pad hub"
           aria-hidden="true">
@@ -765,7 +765,7 @@ button {
 
         <img
           class="buttonSprite"
-          src="./assets/botao-b.png.png"
+          src="./assets/botao-b.png"
           alt="">
 
         B
@@ -779,7 +779,7 @@ button {
 
         <img
           class="buttonSprite"
-          src="./assets/botao-A.png.png"
+          src="./assets/botao-A.png"
           alt="">
 
         A
@@ -1121,8 +1121,8 @@ function updatePowerVisual(isPoweredOn) {
 
   powerButton.textContent =
     isPoweredOn
-      ? '⏻ ON'
-      : '⏻ OFF';
+      ? ' ON'
+      : ' OFF';
 
   powerButton.setAttribute(
     'aria-pressed',

@@ -2000,13 +2000,29 @@ async function loadROM(
       Não inicia o jogo.
     */
 
-    console.log('7. Chamando gameboy.loadGame()...');
+    console.log('7. ANTES DO gameboy.loadGame() — LOAD ROM');
+    showStatus('DIAGNÓSTICO • ENTRANDO NO CORE');
 
-    gameboy.loadGame(
-      buffer
-    );
+    try {
+      gameboy.loadGame(
+        buffer
+      );
 
-    console.log('8. gameboy.loadGame() terminou.');
+      console.log('8. gameboy.loadGame() TERMINOU — LOAD ROM');
+      showStatus('DIAGNÓSTICO • CORE ACEITOU A ROM');
+    } catch (coreError) {
+      console.error(
+        'ERRO DENTRO DO gameboy.loadGame() — LOAD ROM:',
+        coreError
+      );
+
+      showError(
+        'ERRO NO CORE: ' +
+        (coreError?.message || 'ERRO DESCONHECIDO')
+      );
+
+      throw coreError;
+    }
 
     setupSramAutoSave();
 
@@ -2179,9 +2195,15 @@ document
           pendingFrameId = null;
         }
 
+        console.log('RESET 1 — ANTES DO gameboy.loadGame()');
+        showStatus('DIAGNÓSTICO • RESET ENTRANDO NO CORE');
+
         gameboy.loadGame(
           currentRomBuffer
         );
+
+        console.log('RESET 2 — gameboy.loadGame() TERMINOU');
+        showStatus('DIAGNÓSTICO • RESET CORE OK');
 
         setupSramAutoSave();
 
@@ -2384,9 +2406,15 @@ powerButton.addEventListener(
         Recarrega o cartucho no momento de ligar.
       */
 
+      console.log('POWER 1 — ANTES DO gameboy.loadGame()');
+      showStatus('DIAGNÓSTICO • POWER ENTRANDO NO CORE');
+
       gameboy.loadGame(
         currentRomBuffer
       );
+
+      console.log('POWER 2 — gameboy.loadGame() TERMINOU');
+      showStatus('DIAGNÓSTICO • POWER LOAD OK');
 
       setupSramAutoSave();
 
@@ -2399,7 +2427,13 @@ powerButton.addEventListener(
       }
 
 
+      console.log('POWER 3 — ANTES DO gameboy.run()');
+      showStatus('DIAGNÓSTICO • POWER RUN ENTRANDO NO CORE');
+
       gameboy.run();
+
+      console.log('POWER 4 — gameboy.run() TERMINOU');
+      showStatus('DIAGNÓSTICO • CORE RODANDO');
 
       startAutosave();
 
@@ -3644,14 +3678,18 @@ async function init() {
   try {
 
     showStatus(
-      'CARREGANDO EMULADOR...'
+      'DIAGNÓSTICO • BAIXANDO CORE...'
     );
 
+    console.log('INIT 1 — ANTES DO IMPORT DO GAMEBOY');
 
     const { Gameboy } =
       await import(
         'https://esm.sh/gameboy-emulator@1.1.2'
       );
+
+    console.log('INIT 2 — CORE IMPORTADO COM SUCESSO');
+    showStatus('DIAGNÓSTICO • CORE IMPORTADO');
 
 
     /*
@@ -3712,8 +3750,14 @@ async function init() {
     }
 
 
+    console.log('INIT 3 — ANTES DE new Gameboy()');
+    showStatus('DIAGNÓSTICO • CRIANDO CORE');
+
     gameboy =
       new Gameboy();
+
+    console.log('INIT 4 — new Gameboy() TERMINOU');
+    showStatus('DIAGNÓSTICO • CORE CRIADO');
 
 
     /* =================================================
@@ -3923,7 +3967,9 @@ async function init() {
 
   } catch (e) {
 
-    console.error(e);
+    console.error('INIT — ERRO FATAL:', e);
+    console.error('INIT — Mensagem:', e?.message);
+    console.error('INIT — Stack:', e?.stack);
 
     emulatorPoweredOn = false;
 

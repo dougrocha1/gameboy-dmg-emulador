@@ -993,7 +993,310 @@ button {
 </div>
 
 <script type="module">
-'use strict';
+'use strict'; 
+
+/* =====================================================
+   DIAGNÓSTICO MOBILE — CAPTURA TUDO NA TELA
+   ===================================================== */
+
+(() => {
+
+  const diagLines = [];
+  let diagBox = null;
+
+
+  function renderDiag() {
+
+    if (!diagBox) {
+      return;
+    }
+
+    diagBox.textContent =
+      '=== DIAGNÓSTICO MOBILE ===\n\n' +
+      diagLines.slice(-35).join('\n');
+  }
+
+
+  function ensureDiagBox() {
+
+    if (diagBox) {
+      return;
+    }
+
+    const create = () => {
+
+      if (
+        diagBox ||
+        !document.body
+      ) {
+        return;
+      }
+
+      diagBox =
+        document.createElement('div');
+
+      diagBox.id =
+        'mobileDiagBox';
+
+
+      Object.assign(
+        diagBox.style,
+        {
+
+          position: 'fixed',
+
+          left: '8px',
+
+          right: '8px',
+
+          bottom: '8px',
+
+          zIndex: '2147483647',
+
+          background:
+            'rgba(0,0,0,.96)',
+
+          color:
+            '#00ff66',
+
+          border:
+            '2px solid #00ff66',
+
+          borderRadius:
+            '8px',
+
+          padding:
+            '10px',
+
+          fontFamily:
+            'monospace',
+
+          fontSize:
+            '11px',
+
+          lineHeight:
+            '1.35',
+
+          maxHeight:
+            '50vh',
+
+          overflow:
+            'auto',
+
+          whiteSpace:
+            'pre-wrap',
+
+          wordBreak:
+            'break-word',
+
+          pointerEvents:
+            'none'
+
+        }
+      );
+
+
+      document.body.appendChild(
+        diagBox
+      );
+
+      renderDiag();
+    };
+
+
+    if (document.body) {
+
+      create();
+
+    } else {
+
+      document.addEventListener(
+        'DOMContentLoaded',
+        create,
+        {
+          once: true
+        }
+      );
+    }
+  }
+
+
+  function addDiag(text) {
+
+    diagLines.push(
+      String(text)
+    );
+
+    ensureDiagBox();
+
+    renderDiag();
+  }
+
+
+  /* =================================================
+     ALERT
+     ================================================= */
+
+  const originalAlert =
+    window.alert;
+
+
+  window.alert =
+    function(message) {
+
+      addDiag(
+        '🚨 ALERT: ' +
+        message
+      );
+
+
+      try {
+
+        const stack =
+          new Error(
+            'STACK DO ALERT'
+          ).stack;
+
+        addDiag(
+          stack ||
+          'Stack não disponível'
+        );
+
+      } catch (e) {
+
+        addDiag(
+          'Erro obtendo stack: ' +
+          e
+        );
+      }
+
+      /*
+        Não abre o alert nativo.
+        Mostra tudo na tela.
+      */
+    };
+
+
+  /* =================================================
+     ERROS GLOBAIS
+     ================================================= */
+
+  window.addEventListener(
+    'error',
+    event => {
+
+      addDiag(
+        '💥 WINDOW ERROR: ' +
+        (event.message ||
+          'erro desconhecido') +
+        ' | ' +
+        (event.filename || '') +
+        ':' +
+        (event.lineno || '')
+      );
+
+    }
+  );
+
+
+  window.addEventListener(
+    'unhandledrejection',
+    event => {
+
+      const reason =
+        event.reason;
+
+
+      addDiag(
+        '💥 UNHANDLED PROMISE: ' +
+        (
+          reason?.message ||
+          String(reason)
+        )
+      );
+
+
+      if (reason?.stack) {
+
+        addDiag(
+          reason.stack
+        );
+      }
+
+    }
+  );
+
+
+  /* =================================================
+     CAPTURA COMPLETA DO CONSOLE
+     ================================================= */
+
+  const originalLog =
+    console.log.bind(console);
+
+
+  const originalWarn =
+    console.warn.bind(console);
+
+
+  const originalError =
+    console.error.bind(console);
+
+
+  console.log =
+    function(...args) {
+
+      addDiag(
+        'LOG: ' +
+        args
+          .map(String)
+          .join(' ')
+      );
+
+
+      originalLog(...args);
+    };
+
+
+  console.warn =
+    function(...args) {
+
+      addDiag(
+        'WARN: ' +
+        args
+          .map(String)
+          .join(' ')
+      );
+
+
+      originalWarn(...args);
+    };
+
+
+  console.error =
+    function(...args) {
+
+      addDiag(
+        'ERROR: ' +
+        args
+          .map(String)
+          .join(' ')
+      );
+
+
+      originalError(...args);
+    };
+
+
+  /* =================================================
+     ATIVAÇÃO
+     ================================================= */
+
+  addDiag(
+    'DIAGNÓSTICO MOBILE ATIVO'
+  );
+
+})();
 
 /* =====================================================
    ELEMENTOS PRINCIPAIS

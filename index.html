@@ -49,7 +49,7 @@ body {
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 
   overflow: hidden !important;
 }
@@ -296,7 +296,7 @@ canvas {
 
   width: 100%;
 
-  aspect-ratio: 160 / 144;
+  aspect-ratio: 160 / 120;
 
   image-rendering: pixelated;
 
@@ -338,37 +338,51 @@ canvas {
 
 .consoleLogoArea {
   display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  min-height: 25px;
-
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 100%;
-
+  min-height: 25px;
   position: relative;
 }
 
 .consoleLogo {
   display: block;
-
-  width: min(220px, 55%);
-
+  width: 220px;
   height: 50px;
-
   object-fit: contain;
 
   filter:
     contrast(1.05)
     saturate(0.8);
 
-  margin:
-    8px
-    0
-    0
-    -170px;
-
   max-width: 100%;
+  margin: 4px 0 0 0;
+
+  transform: translateX(-04px);
+}
+
+/* CELULAR */
+@media (max-width: 600px) {
+  .consoleLogoArea {
+    align-items: flex-start;
+  }
+
+  .consoleLogo {
+    width: 180px;
+    height: 45px;
+    margin-top: -5px;
+    transform: translateX(-04px);
+  }
+}
+
+/* CELULAR PEQUENO */
+@media (max-width: 380px) {
+  .consoleLogo {
+    width: 160px;
+    height: 42px;
+    margin-top: 2px;
+    transform: translateX(-40px);
+  }
 }
 
 .controls {
@@ -1412,7 +1426,7 @@ function paintBootScreen() {
     'bold 9px Arial, sans-serif';
 
   ctx.fillText(
-    'byDougX',
+    'by DougX',
     canvas.width / 2,
     canvas.height / 2 + 13
   );

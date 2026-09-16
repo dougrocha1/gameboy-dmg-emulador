@@ -631,6 +631,8 @@ button {
 
   -webkit-touch-callout: none;
 
+  -webkit-tap-highlight-color: transparent;
+
 }
 
 
@@ -2813,6 +2815,7 @@ document
     function press(event) {
 
       event.preventDefault();
+      event.stopPropagation();
 
       button.classList.add(
         'pressed'
@@ -2829,6 +2832,7 @@ document
 
       if (event) {
         event.preventDefault();
+        event.stopPropagation();
       }
 
       button.classList.remove(

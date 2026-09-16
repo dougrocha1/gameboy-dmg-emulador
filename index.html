@@ -387,10 +387,13 @@ canvas {
   }
 }
 
+
 .controls {
+
   display: flex;
 
   justify-content: space-between;
+
   align-items: center;
 
   margin-top: 20px;
@@ -398,9 +401,11 @@ canvas {
   width: 100%;
 
   padding: 0 10px;
+
 }
 
 .dpadArea {
+
   display: flex;
 
   flex-direction: column;
@@ -408,10 +413,13 @@ canvas {
   align-items: center;
 
   gap: 10px;
+
 }
 
 .dpad {
+
   width: 110px;
+
   height: 110px;
 
   position: relative;
@@ -420,9 +428,11 @@ canvas {
     drop-shadow(
       0 5px 4px #0006
     );
+
 }
 
 .dpadSprite {
+
   position: absolute;
 
   inset: 0;
@@ -432,19 +442,23 @@ canvas {
   display: block;
 
   width: 100%;
+
   height: 100%;
 
   object-fit: fill;
 
   pointer-events: none;
+
 }
 
 .pad {
+
   position: absolute;
 
   z-index: 2;
 
   background: transparent !important;
+
   background-image: none !important;
 
   border: none !important;
@@ -456,55 +470,77 @@ canvas {
   color: transparent;
 
   appearance: none;
+
 }
 
 .v {
+
   width: 37px;
+
   height: 37px;
 
   left: 36px;
+
 }
 
 .h {
+
   width: 37px;
+
   height: 37px;
 
   top: 36px;
+
 }
 
 .v[data-key="up"] {
+
   top: 0;
+
 }
 
 .v[data-key="down"] {
+
   top: 73px;
+
 }
 
 .h[data-key="left"] {
+
   left: 0;
+
 }
 
 .h[data-key="right"] {
+
   left: 73px;
+
 }
 
 .hub {
+
   display: none !important;
+
 }
 
 .pad[data-key]::after {
+
   content: none !important;
+
 }
 
 .actions {
+
   display: flex;
 
   gap: 10px;
 
   transform: rotate(-18deg);
+
 }
 
 button {
+
   font: inherit;
 
   cursor: pointer;
@@ -512,10 +548,13 @@ button {
   touch-action: none;
 
   border: 0;
+
 }
 
 .ab {
+
   width: 52px;
+
   height: 52px;
 
   border-radius: 50%;
@@ -532,9 +571,11 @@ button {
     0 4px 4px #0006;
 
   overflow: hidden;
+
 }
 
 .buttonSprite {
+
   position: absolute;
 
   inset: 0;
@@ -542,14 +583,17 @@ button {
   z-index: 1;
 
   width: 100%;
+
   height: 100%;
 
   object-fit: fill;
 
   pointer-events: none;
+
 }
 
 .small {
+
   position: relative;
 
   display: flex;
@@ -559,17 +603,39 @@ button {
   gap: 20px;
 
   margin-top: 20px;
+
 }
 
 .smallControl {
+
   position: relative;
 
   display: block;
 
   flex: 0 0 auto;
+
 }
 
+
+/* ==========================================
+   PROTEÇÃO CONTRA SELEÇÃO NO TOUCH
+   ========================================== */
+
+.dpad,
+.ab,
+.smallControl {
+
+  user-select: none;
+
+  -webkit-user-select: none;
+
+  -webkit-touch-callout: none;
+
+}
+
+
 .small button {
+
   position: relative;
 
   z-index: 2;
@@ -599,7 +665,10 @@ button {
 
   box-shadow:
     0 3px 3px #0005;
+
 }
+
+
 
 #power {
   position: absolute !important;

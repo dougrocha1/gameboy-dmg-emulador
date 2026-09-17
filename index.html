@@ -2817,20 +2817,31 @@ document
       button.dataset.key;
 
 
-    function press(event) {
 
-      event.preventDefault();
-      event.stopPropagation();
+function press(event) {
 
-      button.classList.add(
-        'pressed'
-      );
+  event.preventDefault();
+  event.stopPropagation();
 
-      setTouchInput(
-        logical,
-        true
-      );
-    }
+  if (
+    ['up', 'down', 'left', 'right', 'a', 'b']
+      .includes(logical) &&
+    navigator.vibrate
+  ) {
+    navigator.vibrate(15);
+  }
+
+  button.classList.add(
+    'pressed'
+  );
+
+  setTouchInput(
+    logical,
+    true
+  );
+}
+
+
 
 
     function release(event) {

@@ -2589,10 +2589,17 @@ powerButton.addEventListener(
 
     playGameBoyBootSound();
 
+if (
+  gameboy &&
+  gameboy.apu &&
+  typeof gameboy.apu.enableSound === 'function'
+) {
+  gameboy.apu.enableSound();
+}
 
-    showStatus(
-      'NINTENDO • by DougX'
-    );
+showStatus(
+  'NINTENDO • by DougX'
+);
 
 
     /*

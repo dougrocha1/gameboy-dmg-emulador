@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script src="./coi-serviceworker.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+
+  navigator.serviceWorker.register(
+    './coi-serviceworker.js',
+    {
+      scope: './'
+    }
+  )
+  .then(registration => {
+
+    console.log(
+      '🔥 PAPAI COI REGISTRADO:',
+      registration.scope
+    );
+
+  })
+  .catch(error => {
+
+    console.error(
+      '🔥 PAPAI COI FALHOU:',
+      error
+    );
+
+  });
+
+}
+</script>
 <meta charset="UTF-8">
 <meta
   name="viewport"

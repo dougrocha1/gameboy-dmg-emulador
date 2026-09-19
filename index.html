@@ -2325,15 +2325,49 @@ async function loadROM(
       ATIVAR ÁUDIO DO CORE
       =================================================
     */
+if (
+  gameboy.apu &&
+  typeof gameboy.apu.enableSound === 'function'
+) {
 
-    if (
-      gameboy.apu &&
-      typeof gameboy.apu.enableSound === 'function'
-    ) {
+  console.log(
+    'APU: enableSound()'
+  );
 
-      gameboy.apu.enableSound();
+  console.log(
+    'COI antes do áudio:',
+    window.crossOriginIsolated
+  );
 
-    }
+  console.log(
+    'SharedArrayBuffer:',
+    typeof SharedArrayBuffer
+  );
+
+  try {
+
+    gameboy.apu.enableSound();
+
+    console.log(
+      'APU: enableSound() EXECUTOU'
+    );
+
+  } catch (error) {
+
+    console.error(
+      'APU: ERRO AO ATIVAR ÁUDIO:',
+      error
+    );
+
+  }
+
+} else {
+
+  console.log(
+    'APU: enableSound() NÃO DISPONÍVEL'
+  );
+
+}
 
     setupSramAutoSave();
 
@@ -3989,6 +4023,16 @@ window.addEventListener(
    ===================================================== */
 
 async function init() {
+
+console.log(
+  'COI:',
+  window.crossOriginIsolated
+);
+
+console.log(
+  'SharedArrayBuffer:',
+  typeof SharedArrayBuffer
+);
 
   try {
 

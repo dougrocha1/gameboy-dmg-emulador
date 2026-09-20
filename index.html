@@ -13,18 +13,10 @@ if ('serviceWorker' in navigator) {
   )
   .then(registration => {
 
-    console.log(
-      '🔥 PAPAI COI REGISTRADO:',
-      registration.scope
-    );
 
   })
   .catch(error => {
 
-    console.error(
-      '🔥 PAPAI COI FALHOU:',
-      error
-    );
 
   });
 
@@ -1280,10 +1272,6 @@ button {
         📂 CARREGAR ROM
       </button>
 
-      <button id="sound">
-        🔊 SOM
-      </button>
-
       <button id="reset">
         ↻ RESET
       </button>
@@ -1443,7 +1431,6 @@ button {
 <script type="module">
 'use strict';
 
-console.error('🔥 TESTE PAPAI — INDEX NOVO CARREGOU 🔥');
 
 
 
@@ -1812,66 +1799,6 @@ function playGameBoyBootSound() {
     */
   }
 }
-
-
-/*
-  Botão SOM.
-
-  Esse é o melhor ponto para liberar
-  áudio no celular porque é uma interação
-  explícita do usuário.
-*/
-
-document
-  .getElementById('sound')
-  .addEventListener(
-    'click',
-    async event => {
-
-      event.preventDefault();
-
-      soundEnabled = true;
-
-      const unlocked =
-        await unlockAudio();
-
-      if (unlocked) {
-
-        showStatus(
-          'SOM • ATIVADO'
-        );
-
-      } else {
-
-        /*
-          Mesmo se o desbloqueio silencioso
-          falhar, fazemos uma tentativa real
-          de reprodução.
-        */
-
-        try {
-
-          bootAudio.muted = false;
-
-          bootAudio.currentTime = 0;
-
-          await bootAudio.play();
-
-          audioUnlocked = true;
-
-          showStatus(
-            'SOM • ATIVADO'
-          );
-
-        } catch {
-
-          showStatus(
-            'SOM • TOQUE EM ON PARA LIBERAR'
-          );
-        }
-      }
-    }
-  );
 
 
 /* =====================================================
@@ -2356,49 +2283,14 @@ async function loadROM(
       ATIVAR ÁUDIO DO CORE
       =================================================
     */
-if (
-  gameboy.apu &&
-  typeof gameboy.apu.enableSound === 'function'
-) {
-
-  console.log(
-    'APU: enableSound()'
-  );
-
-  console.log(
-    'COI antes do áudio:',
-    window.crossOriginIsolated
-  );
-
-  console.log(
-    'SharedArrayBuffer:',
-    typeof SharedArrayBuffer
-  );
-
-  try {
-
-    gameboy.apu.enableSound();
-
-    console.log(
-      'APU: enableSound() EXECUTOU'
-    );
-
-  } catch (error) {
-
-    console.error(
-      'APU: ERRO AO ATIVAR ÁUDIO:',
-      error
-    );
-
-  }
-
-} else {
-
-  console.log(
-    'APU: enableSound() NÃO DISPONÍVEL'
-  );
-
-}
+    if (
+      gameboy.apu &&
+      typeof gameboy.apu.enableSound === 'function'
+    ) {
+      try {
+        gameboy.apu.enableSound();
+      } catch {}
+    }
 
     setupSramAutoSave();
 
@@ -2614,6 +2506,16 @@ powerButton.addEventListener(
 
       bootAudio.currentTime = 0;
 
+      if (
+        gameboy &&
+        gameboy.apu &&
+        typeof gameboy.apu.disableSound === 'function'
+      ) {
+        try {
+          gameboy.apu.disableSound();
+        } catch {}
+      }
+
       try {
 
         await saveState(true);
@@ -2745,34 +2647,13 @@ powerButton.addEventListener(
         currentRomBuffer
       );
 
-      /*
-        =================================================
-        ATIVAR ÁUDIO DO CORE
-        =================================================
-
-        IMPORTANTE:
-        loadGame() vem primeiro.
-        enableSound() vem depois.
-        run() vem por último.
-      */
-
       if (
         gameboy.apu &&
         typeof gameboy.apu.enableSound === 'function'
       ) {
-
-        console.log(
-          'APU: enableSound()'
-        );
-
-        gameboy.apu.enableSound();
-
-      } else {
-
-        console.log(
-          'APU: enableSound() NÃO DISPONÍVEL'
-        );
-
+        try {
+          gameboy.apu.enableSound();
+        } catch {}
       }
 
       setupSramAutoSave();
@@ -3079,13 +2960,34 @@ window.addEventListener(
 document.addEventListener(
   'visibilitychange',
   () => {
-
     if (
       document.visibilityState !==
       'visible'
     ) {
-
       releaseEverything();
+
+      if (
+        gameboy &&
+        gameboy.apu &&
+        typeof gameboy.apu.disableSound === 'function'
+      ) {
+        try {
+          gameboy.apu.disableSound();
+        } catch {}
+      }
+
+      return;
+    }
+
+    if (
+      emulatorPoweredOn &&
+      gameboy &&
+      gameboy.apu &&
+      typeof gameboy.apu.enableSound === 'function'
+    ) {
+      try {
+        gameboy.apu.enableSound();
+      } catch {}
     }
   }
 );
@@ -4054,16 +3956,6 @@ window.addEventListener(
    ===================================================== */
 
 async function init() {
-
-console.log(
-  'COI:',
-  window.crossOriginIsolated
-);
-
-console.log(
-  'SharedArrayBuffer:',
-  typeof SharedArrayBuffer
-);
 
   try {
 
